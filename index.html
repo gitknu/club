@@ -57,14 +57,14 @@
       transition: width 0.1s ease;
     }
 
-    /* Шапка */
+    /* Шапка (Компактна версія) */
     header {
-      padding: 60px 20px 40px;
+      padding: 24px 20px 20px;
       text-align: center;
       position: relative;
       background: radial-gradient(circle at top, rgba(184, 0, 0, 0.08) 0%, transparent 60%), #0B192C;
-      border-bottom: 4px solid var(--primary-red);
-      box-shadow: 0 10px 30px rgba(11, 25, 44, 0.1);
+      border-bottom: 3px solid var(--primary-red);
+      box-shadow: 0 6px 20px rgba(11, 25, 44, 0.08);
     }
 
     .live-indicator {
@@ -73,11 +73,11 @@
       gap: 6px;
       background-color: rgba(255, 255, 255, 0.1);
       color: #FFFFFF;
-      padding: 6px 14px;
+      padding: 4px 12px;
       border-radius: 50px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -92,24 +92,24 @@
     }
 
     @keyframes pulse {
-      0 { transform: scale(0.9); opacity: 0.6; }
+      0% { transform: scale(0.9); opacity: 0.6; }
       50% { transform: scale(1.2); opacity: 1; }
       100% { transform: scale(0.9); opacity: 0.6; }
     }
 
     h1 {
-      font-size: 3rem;
+      font-size: 1.8rem;
       font-weight: 800;
-      letter-spacing: -1.5px;
-      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
       color: #FFFFFF;
     }
 
     .subtitle {
-      font-size: 1.15rem;
+      font-size: 0.95rem;
       color: #94A3B8;
       max-width: 600px;
-      margin: 0 auto 35px;
+      margin: 0 auto 15px;
       font-weight: 400;
     }
 
@@ -117,27 +117,27 @@
     .stats-bar {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      margin: 25px auto 0;
+      gap: 12px;
+      margin: 15px auto 0;
       max-width: 800px;
     }
 
     .stat-item {
       background: var(--bg-card);
-      padding: 15px;
-      border-radius: 12px;
+      padding: 10px;
+      border-radius: 10px;
       border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
       color: var(--text-main);
     }
 
     .stat-item i {
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
     }
 
     .stat-item-total i { color: var(--text-main); }
@@ -146,7 +146,7 @@
     .stat-item-movies i { color: var(--accent-purple); }
 
     .stat-item span {
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -154,7 +154,7 @@
     }
 
     .stat-item strong {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: var(--text-main);
     }
@@ -163,12 +163,12 @@
     .search-container {
       position: relative;
       max-width: 550px;
-      margin: 30px auto 0;
+      margin: 15px auto 0;
     }
 
     .search-input {
       width: 100%;
-      padding: 16px 20px 16px 52px;
+      padding: 12px 20px 12px 48px;
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 50px;
@@ -1188,7 +1188,7 @@
   <!-- Прогрес скролу -->
   <div id="progress-bar"></div>
 
-  <!-- Шапка -->
+  <!-- Шапка (Компактна версія) -->
   <header>
     <div class="live-indicator">
       <div class="live-dot"></div>
@@ -1238,6 +1238,14 @@
           <button class="filter-btn" data-type="Слова">Слова</button>
           <button class="filter-btn" data-type="Вирази">Вирази</button>
           <button class="filter-btn" data-type="Кіно">Кіно</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="control-label">Відображення:</span>
+        <div class="type-filter-buttons" id="groupFilters">
+          <button class="filter-btn active" data-group="merged">Згруповано</button>
+          <button class="filter-btn" data-group="unique">Всі рядки</button>
         </div>
       </div>
       
@@ -1348,7 +1356,7 @@
   </footer>
 
   <script>
-    // Налаштування підключення до Google Drive / Google Sheets
+    // Налаштування підключення до Google Sheets
     const SHEET_ID = '1ypr_sWk0crqfRtMt6AggAWI2x4wBLDWOKmiMpcM0ebA';
     const GID = '0';
     const FETCH_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
@@ -1358,6 +1366,7 @@
     let currentView = 'cards'; // cards, table, cloud
     let searchTerm = '';
     let activeType = 'Всі';
+    let groupMode = 'merged'; // merged, unique
     let sortKey = 'id-asc';
 
     // DOM елементи
@@ -1471,11 +1480,21 @@
     }
 
     /**
-     * Повертає повне відформатоване ім'я для відображення: NAME [YEAR] (якщо це фільм)
+     * Повертає текстовий варіант з роком у квадратних дужках (для пошуку та таблиці)
      */
     function getEnglishDisplay(item) {
       if (item.typeClass === 'movie' && item.movieYear) {
         return `${item.english} [${item.movieYear}]`;
+      }
+      return item.english;
+    }
+
+    /**
+     * Повертає відформатовану назву з гарно стилізованим роком поруч
+     */
+    function getEnglishDisplayHTML(item) {
+      if (item.typeClass === 'movie' && item.movieYear) {
+        return `${item.english} <span class="movie-year" style="font-weight: 500; font-size: 0.85em; color: var(--text-muted); margin-left: 6px;">(${item.movieYear})</span>`;
       }
       return item.english;
     }
@@ -1488,12 +1507,10 @@
       let mediaTitle = "";
       if (!rawLink) return { url, mediaTitle };
 
-      // Збіг URL до першого пробілу
       const urlMatch = rawLink.match(/(https?:\/\/[^\s]+)/);
       if (urlMatch) {
         url = urlMatch[1];
         
-        // Перевірка та балансування закриваючих дужок в кінці URL (наприклад: ...Shepherd_(2006_film))
         let openCount = (url.match(/\(/g) || []).length;
         let closeCount = (url.match(/\)/g) || []).length;
         
@@ -1502,7 +1519,6 @@
           closeCount--;
         }
 
-        // Парсинг назви з тексту поза межами вилученого URL
         const remnant = rawLink.replace(url, '').trim();
         if (remnant) {
           const titleMatch = remnant.match(/^\(([^)]+)\)$/) || remnant.match(/\(([^)]+)\)/);
@@ -1534,7 +1550,6 @@
       const rows = jsonTable.rows;
       if (!rows || rows.length === 0) return;
 
-      // Інтелектуальний пошук рядка заголовків
       let headerRowIndex = 0;
       for (let i = 0; i < Math.min(5, rows.length); i++) {
         const row = rows[i];
@@ -1554,7 +1569,6 @@
       const headerRow = rows[headerRowIndex];
       const headers = headerRow.c.map(cell => cell && cell.v ? String(cell.v).trim() : "");
 
-      // Визначаємо індекси стовпчиків
       let idxId = -1;
       let idxDate = -1;
       let idxLink = -1;
@@ -1606,10 +1620,8 @@
 
         if (!english && !translation) continue;
 
-        // Покращений парсинг посилань та назв
         const { url, mediaTitle } = extractUrlAndTitle(rawLink);
 
-        // Отримання YouTube Video ID
         let youtubeId = "";
         if (url && (url.includes("youtube.com") || url.includes("youtu.be"))) {
           const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\s]{11})/;
@@ -1619,7 +1631,6 @@
           }
         }
 
-        // Парсинг деталей Вікіпедії
         let wikiLang = "";
         let wikiTitle = "";
         if (url) {
@@ -1630,7 +1641,6 @@
           }
         }
 
-        // Класифікація категорій
         let typeClass = "other";
         let typeIcon = "hash";
         let cleanType = type;
@@ -1653,7 +1663,6 @@
           cleanType = cleanType || "Інше";
         }
 
-        // Розумне відділення року випуску від англійської назви фільму
         let englishName = english;
         let movieYear = "";
 
@@ -1698,13 +1707,88 @@
     }
 
     /**
-     * Рахуємо статистику всієї колекції
+     * Алгоритм автоматичного злиття карток з однаковою англійською назвою
      */
-    function calculateGlobalStats(items) {
-      document.getElementById('statTotal').innerText = items.length;
-      document.getElementById('statWords').innerText = items.filter(i => i.typeClass === 'word').length;
-      document.getElementById('statExpressions').innerText = items.filter(i => i.typeClass === 'expression').length;
-      document.getElementById('statMovies').innerText = items.filter(i => i.typeClass === 'movie').length;
+    function getMergedItems(items) {
+      const mergedMap = new Map();
+      
+      items.forEach(item => {
+        const key = item.english.toLowerCase().trim();
+        if (!mergedMap.has(key)) {
+          mergedMap.set(key, []);
+        }
+        mergedMap.get(key).push(item);
+      });
+      
+      const result = [];
+      
+      mergedMap.forEach((group) => {
+        if (group.length === 1) {
+          result.push({ ...group[0], isMerged: false, originalItems: group });
+        } else {
+          const first = group[0];
+          group.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+          
+          const translations = [...new Set(group.map(i => i.translation).map(t => t.trim()).filter(Boolean))];
+          const comments = [...new Set(group.map(i => i.comment).map(c => c.trim()).filter(Boolean))];
+          
+          const mediaItems = [];
+          const seenUrls = new Set();
+          group.forEach(i => {
+            if (i.url && !seenUrls.has(i.url)) {
+              seenUrls.add(i.url);
+              mediaItems.push({
+                url: i.url,
+                mediaTitle: i.mediaTitle,
+                youtubeId: i.youtubeId,
+                wikiLang: i.wikiLang,
+                wikiTitle: i.wikiTitle,
+                wikiImageUrl: i.wikiImageUrl,
+                typeClass: i.typeClass,
+                id: i.id
+              });
+            }
+          });
+
+          const ids = group.map(i => parseInt(i.id)).sort((a, b) => a - b);
+          let idDisplay = first.id;
+          if (ids.length > 1) {
+            const isConsecutive = ids.every((num, idx) => idx === 0 || num === ids[idx - 1] + 1);
+            if (isConsecutive) {
+              idDisplay = `${ids[0]}–${ids[ids.length - 1]}`;
+            } else {
+              idDisplay = ids.join(', ');
+            }
+          }
+
+          const sortedDates = [...group].sort((a, b) => parseDateString(b.date) - parseDateString(a.date));
+          const latestDate = sortedDates[0].date;
+
+          result.push({
+            id: idDisplay,
+            date: latestDate,
+            english: first.english,
+            movieYear: first.movieYear,
+            translation: translations.join(' / '),
+            comments: comments,
+            comment: comments[0] || "",
+            type: first.type,
+            typeClass: first.typeClass,
+            typeIcon: first.typeIcon,
+            isMerged: true,
+            mediaItems: mediaItems,
+            url: first.url,
+            mediaTitle: first.mediaTitle,
+            youtubeId: first.youtubeId,
+            wikiLang: first.wikiLang,
+            wikiTitle: first.wikiTitle,
+            wikiImageUrl: first.wikiImageUrl,
+            originalItems: group
+          });
+        }
+      });
+      
+      return result;
     }
 
     /**
@@ -1744,7 +1828,7 @@
         updateAppUI();
       });
 
-      // Слухачі типів фільтру
+      // Фільтри типу картки
       typeFilters.addEventListener('click', (e) => {
         if (e.target.classList.contains('filter-btn')) {
           document.querySelectorAll('#typeFilters .filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -1753,6 +1837,19 @@
           updateAppUI();
         }
       });
+
+      // Перемикач групування карток
+      const groupFilters = document.getElementById('groupFilters');
+      if (groupFilters) {
+        groupFilters.addEventListener('click', (e) => {
+          if (e.target.classList.contains('filter-btn')) {
+            document.querySelectorAll('#groupFilters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            groupMode = e.target.getAttribute('data-group');
+            updateAppUI();
+          }
+        });
+      }
 
       // Зміна сортування
       sortSelect.addEventListener('change', (e) => {
@@ -1874,18 +1971,29 @@
      * Фільтрація та Сортування
      */
     function getProcessedDataset() {
-      let data = [...allParsedItems];
+      let data = [];
+      if (groupMode === 'merged') {
+        data = getMergedItems(allParsedItems);
+      } else {
+        data = [...allParsedItems];
+      }
 
       // Текстовий пошук
       if (searchTerm) {
         const term = searchTerm.toLowerCase();
         data = data.filter(item => {
           const displayEng = getEnglishDisplay(item).toLowerCase();
-          return displayEng.includes(term) ||
-            item.translation.toLowerCase().includes(term) ||
-            item.comment.toLowerCase().includes(term) ||
-            item.date.toLowerCase().includes(term) ||
-            item.mediaTitle.toLowerCase().includes(term);
+          const translationMatch = item.translation.toLowerCase().includes(term);
+          const commentMatch = item.comments 
+            ? item.comments.some(c => c.toLowerCase().includes(term)) 
+            : item.comment.toLowerCase().includes(term);
+          const dateMatch = item.date.toLowerCase().includes(term);
+          
+          const mediaTitleMatch = item.isMerged && item.mediaItems
+            ? item.mediaItems.some(m => m.mediaTitle.toLowerCase().includes(term))
+            : item.mediaTitle.toLowerCase().includes(term);
+
+          return displayEng.includes(term) || translationMatch || commentMatch || dateMatch || mediaTitleMatch;
         });
       }
 
@@ -1901,9 +2009,17 @@
 
       // Сортування
       if (sortKey === 'id-asc') {
-        data.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+        data.sort((a, b) => {
+          const aId = parseInt(String(a.id).split(/[–,-]/)[0]);
+          const bId = parseInt(String(b.id).split(/[–,-]/)[0]);
+          return aId - bId;
+        });
       } else if (sortKey === 'id-desc') {
-        data.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+        data.sort((a, b) => {
+          const aId = parseInt(String(a.id).split(/[–,-]/)[0]);
+          const bId = parseInt(String(b.id).split(/[–,-]/)[0]);
+          return bId - aId;
+        });
       } else if (sortKey === 'en-asc') {
         data.sort((a, b) => getEnglishDisplay(a).localeCompare(getEnglishDisplay(b)));
       } else if (sortKey === 'en-desc') {
@@ -1931,7 +2047,6 @@
     function updateAppUI() {
       const activeData = getProcessedDataset();
 
-      // Візуальне перемикання активного розділу
       document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(`section-${currentView}`).classList.add('active');
 
@@ -1949,7 +2064,23 @@
         renderCloudView(activeData);
       }
 
-      // Ініціалізація іконок Lucide для нових елементів
+      lucide.createIcons();
+    }
+
+    /**
+     * Відображення стану "Нічого не знайдено"
+     */
+    function renderNoResults() {
+      const emptyHtml = `
+        <div class="no-results">
+          <i data-lucide="search-x" class="no-results-icon"></i>
+          <h3>Елементів не виявлено</h3>
+          <p>Спробуйте очистити пошуковий запит або змінити критерії фільтрації.</p>
+        </div>
+      `;
+      cardsGrid.innerHTML = emptyHtml;
+      tableBody.innerHTML = `<tr><td colspan="7">${emptyHtml}</td></tr>`;
+      tagCloud.innerHTML = emptyHtml;
       lucide.createIcons();
     }
 
@@ -1990,7 +2121,26 @@
      */
     function fetchWikiImagesForVisibleCards(items) {
       items.forEach(item => {
-        if (item.wikiTitle) {
+        if (item.isMerged && item.mediaItems) {
+          item.mediaItems.forEach(media => {
+            if (media.wikiTitle) {
+              const imgEl = document.getElementById(`wiki-img-${media.id}`);
+              if (imgEl && !imgEl.classList.contains('loaded')) {
+                loadWikiImage(media, (imgUrl) => {
+                  if (imgUrl) {
+                    imgEl.src = imgUrl;
+                    imgEl.style.display = 'block';
+                    imgEl.onload = () => {
+                      imgEl.classList.add('loaded');
+                    };
+                  } else {
+                    imgEl.style.display = 'none';
+                  }
+                });
+              }
+            }
+          });
+        } else if (item.wikiTitle) {
           const imgEl = document.getElementById(`wiki-img-${item.id}`);
           if (imgEl && !imgEl.classList.contains('loaded')) {
             loadWikiImage(item, (imgUrl) => {
@@ -2010,65 +2160,78 @@
     }
 
     /**
-     * Побудова медіа блоку картки (підтримує YouTube, прев'ю Вікіпедії та звичайні посилання)
+     * Побудова окремого медіа-блоку
      */
-    function buildMediaHtml(item, isModal = false) {
-      if (!item.url) return '';
+    function buildSingleMediaHtml(media, isModal = false) {
+      if (!media.url) return '';
 
-      const containerId = isModal ? `modal-media-wrapper-${item.id}` : `media-container-${item.id}`;
+      const containerId = isModal 
+        ? `modal-media-wrapper-${media.id}-${Math.floor(Math.random() * 1000)}` 
+        : `media-container-${media.id}`;
 
-      if (item.youtubeId) {
+      if (media.youtubeId) {
         return `
-          <div class="card-media" id="${containerId}">
-            <div class="youtube-preview" onclick="playYoutubeInline('${item.youtubeId}', '${containerId}')" title="Дивитись наживо">
-              <img src="https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg" alt="${item.mediaTitle}">
+          <div class="card-media" id="${containerId}" style="margin-top: 10px;">
+            <div class="youtube-preview" onclick="playYoutubeInline('${media.youtubeId}', '${containerId}')" title="Дивитись наживо">
+              <img src="https://img.youtube.com/vi/${media.youtubeId}/hqdefault.jpg" alt="${media.mediaTitle}">
               <div class="youtube-overlay">
                 <div class="youtube-play-btn">
                   <i data-lucide="play"></i>
                 </div>
               </div>
-              <span class="media-caption">${item.mediaTitle}</span>
+              <span class="media-caption">${media.mediaTitle}</span>
             </div>
           </div>
         `;
-      } else if (item.wikiTitle) {
-        const imgId = isModal ? `modal-wiki-img-${item.id}` : `wiki-img-${item.id}`;
-        const hasImage = item.wikiImageUrl && item.wikiImageUrl !== 'no-image';
-        const srcUrl = hasImage ? item.wikiImageUrl : "";
+      } else if (media.wikiTitle) {
+        const imgId = isModal 
+          ? `modal-wiki-img-${media.id}-${Math.floor(Math.random() * 1000)}` 
+          : `wiki-img-${media.id}`;
+        const hasImage = media.wikiImageUrl && media.wikiImageUrl !== 'no-image';
+        const srcUrl = hasImage ? media.wikiImageUrl : "";
         
-        // Зображення рендериться прихованим і плавно вмикається після завантаження
         const imgHtml = srcUrl 
           ? `<img id="${imgId}" src="${srcUrl}" alt="" class="loaded">` 
           : `<img id="${imgId}" src="" alt="" style="display: none;">`;
         
         return `
-          <div class="card-media" id="${containerId}">
-            <a href="${item.url}" target="_blank" class="wikipedia-preview" title="Читати у Вікіпедії">
+          <div class="card-media" id="${containerId}" style="margin-top: 10px;">
+            <a href="${media.url}" target="_blank" class="wikipedia-preview" title="Читати у Вікіпедії">
               ${imgHtml}
               <div class="wiki-overlay">
                 <div class="wiki-logo-btn">
                   <i data-lucide="book-open"></i>
                 </div>
               </div>
-              <span class="media-caption">${item.mediaTitle}</span>
+              <span class="media-caption">${media.mediaTitle}</span>
             </a>
           </div>
         `;
       } else {
         return `
-          <div class="card-media">
-            <a href="${item.url}" target="_blank" class="generic-link-preview" title="Відкрити ресурс">
+          <div class="card-media" style="margin-top: 10px;">
+            <a href="${media.url}" target="_blank" class="generic-link-preview" title="Відкрити ресурс">
               <div class="link-icon-container">
-                <i data-lucide="${item.typeClass === 'movie' ? 'film' : 'external-link'}"></i>
+                <i data-lucide="${media.typeClass === 'movie' ? 'film' : 'external-link'}"></i>
               </div>
               <div class="link-details">
-                <span class="link-title">${item.mediaTitle || 'Детальніше'}</span>
-                <span class="link-domain">${getDomainName(item.url)}</span>
+                <span class="link-title">${media.mediaTitle || 'Детальніше'}</span>
+                <span class="link-domain">${getDomainName(media.url)}</span>
               </div>
             </a>
           </div>
         `;
       }
+    }
+
+    /**
+     * Побудова медіа блоку картки (підтримує об'єднання декількох посилань)
+     */
+    function buildMediaHtml(item, isModal = false) {
+      if (item.isMerged && item.mediaItems && item.mediaItems.length > 0) {
+        return item.mediaItems.map(media => buildSingleMediaHtml(media, isModal)).join('');
+      }
+      return buildSingleMediaHtml(item, isModal);
     }
 
     function getDomainName(urlStr) {
@@ -2104,12 +2267,22 @@
     function renderCardsView(data) {
       cardsGrid.innerHTML = '';
       data.forEach(item => {
-        const commentHtml = item.comment ? `
-          <div class="card-comment">
-            <i data-lucide="quote"></i>
-            <span>${item.comment}</span>
-          </div>
-        ` : '';
+        let commentHtml = '';
+        if (item.isMerged && item.comments && item.comments.length > 0) {
+          commentHtml = item.comments.map(c => `
+            <div class="card-comment" style="margin-top: 8px;">
+              <i data-lucide="quote"></i>
+              <span>${c}</span>
+            </div>
+          `).join('');
+        } else if (item.comment) {
+          commentHtml = `
+            <div class="card-comment">
+              <i data-lucide="quote"></i>
+              <span>${item.comment}</span>
+            </div>
+          `;
+        }
 
         const mediaHtml = buildMediaHtml(item);
 
@@ -2124,7 +2297,7 @@
                 <span class="card-meta">№ ${item.id} • ${item.date}</span>
               </div>
               <div class="card-body">
-                <h3 class="card-english">${getEnglishDisplay(item)}</h3>
+                <h3 class="card-english">${getEnglishDisplayHTML(item)}</h3>
                 <div class="card-divider"></div>
                 <p class="card-translation">${item.translation}</p>
                 ${commentHtml}
@@ -2205,19 +2378,31 @@
     }
 
     /**
-     * ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА
+     * ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА (Підтримує як звичайні, так і згруповані картки)
      */
     function openModal(itemId) {
-      const item = allParsedItems.find(i => i.id === itemId);
+      const activeData = getProcessedDataset();
+      const item = activeData.find(i => String(i.id) === String(itemId));
       if (!item) return;
 
       const mediaHtml = buildMediaHtml(item, true);
-      const commentHtml = item.comment ? `
-        <div class="card-comment" style="margin-top: 15px;">
-          <i data-lucide="quote"></i>
-          <span>${item.comment}</span>
-        </div>
-      ` : '';
+      
+      let commentHtml = '';
+      if (item.isMerged && item.comments && item.comments.length > 0) {
+        commentHtml = item.comments.map(c => `
+          <div class="card-comment" style="margin-top: 12px;">
+            <i data-lucide="quote"></i>
+            <span>${c}</span>
+          </div>
+        `).join('');
+      } else if (item.comment) {
+        commentHtml = `
+          <div class="card-comment" style="margin-top: 15px;">
+            <i data-lucide="quote"></i>
+            <span>${item.comment}</span>
+          </div>
+        `;
+      }
 
       modalTarget.innerHTML = `
         <div class="card-header" style="margin-bottom: 20px;">
@@ -2227,7 +2412,7 @@
           </span>
           <span class="card-meta">№ ${item.id} • ${item.date}</span>
         </div>
-        <h2 class="card-english" style="font-size: 1.8rem; line-height: 1.3; margin-bottom: 10px;">${getEnglishDisplay(item)}</h2>
+        <h2 class="card-english" style="font-size: 1.8rem; line-height: 1.3; margin-bottom: 10px;">${getEnglishDisplayHTML(item)}</h2>
         <div class="card-divider" style="width: 50px; height: 4px; background-color: var(--primary-red); margin-bottom: 15px;"></div>
         <p class="card-translation" style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 20px;">${item.translation}</p>
         ${commentHtml}
@@ -2239,7 +2424,27 @@
       modalOverlay.classList.add('active');
       lucide.createIcons();
 
-      if (item.wikiTitle) {
+      // Динамічний пошук та завантаження фото Вікіпедії для модального вікна
+      if (item.isMerged && item.mediaItems) {
+        item.mediaItems.forEach(media => {
+          if (media.wikiTitle) {
+            const modalImgEl = document.querySelector(`[id^="modal-wiki-img-${media.id}"]`);
+            if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
+              loadWikiImage(media, (imgUrl) => {
+                if (imgUrl) {
+                  modalImgEl.src = imgUrl;
+                  modalImgEl.style.display = 'block';
+                  modalImgEl.onload = () => {
+                    modalImgEl.classList.add('loaded');
+                  };
+                } else {
+                  modalImgEl.style.display = 'none';
+                }
+              });
+            }
+          }
+        });
+      } else if (item.wikiTitle) {
         const modalImgEl = document.getElementById(`modal-wiki-img-${item.id}`);
         if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
           loadWikiImage(item, (imgUrl) => {
