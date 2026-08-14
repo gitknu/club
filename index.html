@@ -49,14 +49,24 @@
       z-index: 10000;
       transition: width 0.1s ease;
     }
-    /* Шапка (Зменшено за висотою вдвічі) */
+    /* Шапка (Компактний десктопний дизайн) */
     header {
-      padding: 25px 20px 20px;
+      padding: 20px 15px;
       text-align: center;
       position: relative;
       background: radial-gradient(circle at top, rgba(184, 0, 0, 0.08) 0%, transparent 60%), #0B192C;
       border-bottom: 4px solid var(--primary-red);
       box-shadow: 0 10px 30px rgba(11, 25, 44, 0.1);
+    }
+    .header-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .header-branding {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     .live-indicator {
       display: inline-flex;
@@ -68,7 +78,7 @@
       border-radius: 50px;
       font-size: 0.7rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -86,76 +96,82 @@
       100% { transform: scale(0.9); opacity: 0.6; }
     }
     h1 {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 800;
       letter-spacing: -1px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       color: #FFFFFF;
     }
     .subtitle {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       color: #94A3B8;
       max-width: 600px;
-      margin: 0 auto 15px;
+      margin: 0;
       font-weight: 400;
     }
     /* Метрики */
     .stats-bar {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
-      margin: 15px auto 0;
-      max-width: 750px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 10px auto 0;
+      max-width: 100%;
     }
     .stat-item {
       background: var(--bg-card);
-      padding: 10px 12px;
+      padding: 6px 12px;
       border-radius: 12px;
       border: 1px solid var(--border-color);
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
       color: var(--text-main);
     }
     .stat-item i {
       width: 18px;
       height: 18px;
+      flex-shrink: 0;
     }
     .stat-item-total i { color: var(--text-main); }
     .stat-item-words i { color: var(--accent-blue); }
     .stat-item-expressions i { color: var(--primary-red); }
     .stat-item-movies i { color: var(--accent-purple); }
+    .stat-item div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.1;
+    }
     .stat-item span {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .stat-item strong {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: var(--text-main);
     }
     /* Контейнер головного пошуку */
     .search-container {
       position: relative;
-      max-width: 550px;
-      margin: 15px auto 0;
+      width: 100%;
+      margin: 10px auto 0;
     }
     .search-input {
       width: 100%;
-      padding: 12px 20px 12px 48px;
+      padding: 10px 16px 10px 42px;
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 50px;
       color: var(--text-main);
       font-family: var(--font-family);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
     }
     .search-input:focus {
       outline: none;
@@ -164,36 +180,36 @@
     }
     .search-icon {
       position: absolute;
-      left: 20px;
+      left: 16px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-muted);
       pointer-events: none;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
-    /* Панель Керування (Фільтри та Сортування) */
+    /* Панель Керування (Фільтри та Сортування - Мініфіковано) */
     .controls-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 20px rgba(11, 25, 44, 0.03);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(11, 25, 44, 0.02);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 12px;
     }
     .filter-group, .sort-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
     .control-label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -204,12 +220,12 @@
       gap: 6px;
     }
     .filter-btn {
-      padding: 8px 18px;
+      padding: 6px 14px;
       border-radius: 30px;
       border: 1px solid var(--border-color);
       background: transparent;
       font-family: var(--font-family);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
@@ -235,9 +251,9 @@
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 30px;
-      padding: 8px 32px 8px 14px;
+      padding: 6px 28px 6px 12px;
       font-family: var(--font-family);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--text-main);
       cursor: pointer;
@@ -998,7 +1014,60 @@
       border-top: 1px solid var(--border-color);
       margin-top: 50px;
     }
-    /* АДАПТИВНІСТЬ */
+    /* АДАПТИВНІСТЬ ДЛЯ ДЕСКТОПІВ (Rearranged Horizontal Header & Compact Panel) */
+    @media (min-width: 992px) {
+      header {
+        padding: 12px 20px;
+      }
+      .header-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .header-branding {
+        text-align: left;
+        align-items: flex-start;
+        flex-shrink: 0;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 2px;
+      }
+      .live-indicator {
+        margin-bottom: 2px;
+      }
+      .subtitle {
+        font-size: 0.8rem;
+      }
+      .header-search {
+        flex-grow: 1;
+        max-width: 320px;
+        margin: 0;
+      }
+      .search-container {
+        margin: 0;
+      }
+      .header-stats {
+        flex-shrink: 0;
+      }
+      .stats-bar {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        margin: 0;
+      }
+      .stat-item {
+        padding: 5px 12px;
+        border-radius: 10px;
+      }
+      .stat-item strong {
+        font-size: 1.05rem;
+      }
+    }
     @media (max-width: 768px) {
       h1 { font-size: 1.5rem; }
       .subtitle { font-size: 0.85rem; margin-bottom: 12px; }
@@ -1051,38 +1120,54 @@
   <div id="progress-bar"></div>
   <!-- Шапка -->
   <header>
-    <div class="live-indicator">
-      <div class="live-dot"></div>
-      <span>Наживо з Google Sheets</span>
-    </div>
-    <h1>The Breakfast Club</h1>
-    <p class="subtitle">Інтерактивний словник виразів, нових слів та медіа-матеріалів клубу</p>
-    <!-- Головний Пошук -->
-    <div class="search-container">
-      <i data-lucide="search" class="search-icon"></i>
-      <input type="text" id="mainSearchInput" class="search-input" placeholder="Шукати англійське слово, переклад або приклад...">
-    </div>
-    <!-- Метрики -->
-    <div class="stats-bar">
-      <div class="stat-item stat-item-total">
-        <i data-lucide="database"></i>
-        <strong id="statTotal">0</strong>
-        <span>Всього елементів</span>
+    <div class="header-container">
+      <div class="header-branding">
+        <div class="live-indicator">
+          <div class="live-dot"></div>
+          <span>Наживо з Google Sheets</span>
+        </div>
+        <h1>The Breakfast Club</h1>
+        <p class="subtitle">Словник виразів, слів та медіа клубу</p>
       </div>
-      <div class="stat-item stat-item-words">
-        <i data-lucide="book-open"></i>
-        <strong id="statWords">0</strong>
-        <span>Нові слова</span>
+      <!-- Головний Пошук -->
+      <div class="header-search">
+        <div class="search-container">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="mainSearchInput" class="search-input" placeholder="Шукати слово, переклад або приклад...">
+        </div>
       </div>
-      <div class="stat-item stat-item-expressions">
-        <i data-lucide="message-square"></i>
-        <strong id="statExpressions">0</strong>
-        <span>Крилаті вирази</span>
-      </div>
-      <div class="stat-item stat-item-movies">
-        <i data-lucide="film"></i>
-        <strong id="statMovies">0</strong>
-        <span>Кіно та Медіа</span>
+      <!-- Метрики -->
+      <div class="header-stats">
+        <div class="stats-bar">
+          <div class="stat-item stat-item-total">
+            <i data-lucide="database"></i>
+            <div>
+              <strong id="statTotal">0</strong>
+              <span>Всього</span>
+            </div>
+          </div>
+          <div class="stat-item stat-item-words">
+            <i data-lucide="book-open"></i>
+            <div>
+              <strong id="statWords">0</strong>
+              <span>Слова</span>
+            </div>
+          </div>
+          <div class="stat-item stat-item-expressions">
+            <i data-lucide="message-square"></i>
+            <div>
+              <strong id="statExpressions">0</strong>
+              <span>Вирази</span>
+            </div>
+          </div>
+          <div class="stat-item stat-item-movies">
+            <i data-lucide="film"></i>
+            <div>
+              <strong id="statMovies">0</strong>
+              <span>Кіно</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -1301,11 +1386,11 @@
       return dateStr;
     }
     /**
-     * Повертає повне відформатоване ім'я для відображення: NAME [YEAR] (якщо це фільм)
+     * Повертає повне відформатоване ім'я для відображення
      */
     function getEnglishDisplay(item) {
       if (item.typeClass === 'movie' && item.movieYear) {
-        return `${item.english} [${item.movieYear}]`;
+        return `${item.english} (${item.movieYear})`;
       }
       return item.english;
     }
@@ -1322,7 +1407,7 @@
         url = urlMatch[1];
         // Перевірка та балансування закриваючих дужок в кінці URL (наприклад: ...Shepherd_(2006_film))
         let openCount = (url.match(/\(/g) || []).length;
-        let closeCount = (url.match(/\)/g) || []).length;
+        let closeCount = (url.match(/\(/g) || []).length;
         while (closeCount > openCount && url.endsWith(')')) {
           url = url.slice(0, -1);
           closeCount--;
@@ -1348,6 +1433,27 @@
         }
       }
       return { url, mediaTitle };
+    }
+    /**
+     * Екстрактор назви та року зі стовпчиків
+     */
+    function parseMovieTitleAndYear(titleStr) {
+      let name = titleStr || "";
+      let year = "";
+      if (!name) return { name, year };
+      const bracketMatch = name.match(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/);
+      if (bracketMatch) {
+        year = bracketMatch[1];
+        name = name.replace(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/g, '').trim();
+      } else {
+        const endMatch = name.match(/(?:[,\-\s]+)\b(19\d{2}|20\d{2})\b\s*$/);
+        if (endMatch) {
+          year = endMatch[1];
+          name = name.replace(/(?:[,\-\s]+)\b(19\d{2}|20\d{2})\b\s*$/, '').trim();
+        }
+      }
+      name = name.replace(/\(\s*\)|\[\s*\]|\{\s*\}/g, '').replace(/\s+/g, ' ').trim();
+      return { name, year };
     }
     /**
      * Обробка сирих рядків та адаптація до нашої моделі даних
@@ -1459,23 +1565,24 @@
           typeIcon = "hash";
           cleanType = cleanType || "Інше";
         }
-        // Розумне відділення року випуску від англійської назви фільму
+        // Розумне відділення року випуску та правильне розміщення англійської назви зверху
         let englishName = english;
+        let translationText = translation;
         let movieYear = "";
         if (typeClass === 'movie') {
-          englishName = englishName.trim().replace(/\s+/g, ' ');
-          const bracketMatch = englishName.match(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/);
-          if (bracketMatch) {
-            movieYear = bracketMatch[1];
-            englishName = englishName.replace(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/g, '').trim();
-          } else {
-            const endMatch = englishName.match(/(?:[,\-\s]+)\b(19\d{2}|20\d{2})\b\s*$/);
-            if (endMatch) {
-              movieYear = endMatch[1];
-              englishName = englishName.replace(/(?:[,\-\s]+)\b(19\d{2}|20\d{2})\b\s*$/, '').trim();
+          const hasUkrInEnglishColumn = /[а-яА-Яееєєііїїґґ]/.test(english);
+          const { name, year } = parseMovieTitleAndYear(mediaTitle || english);
+          if (name) {
+            if (hasUkrInEnglishColumn) {
+              englishName = name;
+              movieYear = year;
+              translationText = english;
+            } else {
+              englishName = name;
+              movieYear = year;
+              translationText = translation || "";
             }
           }
-          englishName = englishName.replace(/\(\s*\)|\[\s*\]|\{\s*\}/g, '').replace(/\s+/g, ' ').trim();
         }
         allParsedItems.push({
           id: id || String(allParsedItems.length + 1),
@@ -1492,7 +1599,7 @@
           typeIcon,
           english: englishName,
           movieYear: movieYear,
-          translation,
+          translation: translationText || "—",
           comment
         });
       }
@@ -1734,7 +1841,7 @@
     function renderNoResults() {
       cardsGrid.innerHTML = `
         <div class="no-results">
-          <i data-lucide="search-slash" class="no-results-icon"></i>
+          <i data-lucide="search-slash" class="no-results-icon" style="width: 40px; height: 40px; opacity: 0.5; margin-bottom: 10px;"></i>
           <h3>Нічого не знайдено</h3>
           <p>Спробуйте змінити ключові слова або налаштування фільтрації.</p>
         </div>
@@ -1920,7 +2027,10 @@
           return `
             <div class="card-sub-item" style="${idx > 0 ? 'border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px;' : ''}">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                <h4 class="card-english" style="font-size: 1.15rem; margin-bottom: 0;">${getEnglishDisplay(item)}</h4>
+                <h4 class="card-english" style="font-size: 1.15rem; margin-bottom: 0;">
+                  ${item.english}
+                  ${item.movieYear ? ` <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">(${item.movieYear})</span>` : ''}
+                </h4>
                 ${group.length > 1 ? `
                   <span class="badge badge-${item.typeClass}" style="font-size: 0.6rem; padding: 2px 6px;">
                     ${item.type}
@@ -1944,7 +2054,7 @@
                   </span>
                   ${movieItem ? `
                     <span class="card-movie-header">
-                      <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${getEnglishDisplay(movieItem)}
+                      <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${movieItem.english} ${movieItem.movieYear ? `(${movieItem.movieYear})` : ''}
                     </span>
                   ` : ''}
                 </div>
@@ -2047,7 +2157,10 @@
         return `
           <div class="modal-sub-item" style="${idx > 0 ? 'border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;' : ''}">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-              <h3 class="card-english" style="font-size: 1.4rem; margin-bottom: 0;">${getEnglishDisplay(gItem)}</h3>
+              <h3 class="card-english" style="font-size: 1.4rem; margin-bottom: 0;">
+                ${gItem.english}
+                ${gItem.movieYear ? ` <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">(${gItem.movieYear})</span>` : ''}
+              </h3>
               <span class="badge badge-${gItem.typeClass}">
                 <i data-lucide="${gItem.typeIcon}"></i>
                 ${gItem.type}
@@ -2067,7 +2180,7 @@
             </span>
             ${movieItem ? `
               <span class="card-movie-header">
-                <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${getEnglishDisplay(movieItem)}
+                <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${movieItem.english} ${movieItem.movieYear ? `(${movieItem.movieYear})` : ''}
               </span>
             ` : ''}
           </div>
