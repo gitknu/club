@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Breakfast Club</title>
+  <title>The Breakfast Club Visualizer</title>
   <!-- Захист від помилок блокування YouTube-плеєра -->
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- Шрифт Montserrat -->
@@ -188,7 +188,7 @@
       width: 16px;
       height: 16px;
     }
-    /* Панель Керування (Фільтри та Сортування - Мініфіковано) */
+    /* Панель Керування (Фільтри, Таби та Сортування - Мініфіковано) */
     .controls-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -254,8 +254,8 @@
       padding: 6px 28px 6px 12px;
       font-family: var(--font-family);
       font-size: 0.78rem;
-      font-weight: 700;
       color: var(--text-main);
+      font-weight: 700;
       cursor: pointer;
       outline: none;
       transition: all 0.2s ease;
@@ -271,34 +271,35 @@
       height: 14px;
       pointer-events: none;
     }
-    /* Перемикач вкладок */
+    /* Перемикач вкладок вбудовано в панель керування */
     .view-tabs-container {
       display: flex;
       justify-content: center;
-      gap: 8px;
-      margin: 0 auto 30px;
-      max-width: 500px;
-      background-color: rgba(226, 232, 240, 0.8);
-      padding: 6px;
-      border-radius: 50px;
+      gap: 4px;
+      margin: 0;
+      background-color: #E2E8F0;
+      padding: 4px;
+      border-radius: 30px;
       border: 1px solid var(--border-color);
+      width: auto;
+      flex-shrink: 0;
     }
     .view-tab-btn {
-      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border-radius: 50px;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
       border: none;
       background: transparent;
       color: var(--text-muted);
       font-family: var(--font-family);
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
     .view-tab-btn:hover {
       color: var(--text-main);
@@ -306,7 +307,7 @@
     .view-tab-btn.active {
       background-color: var(--text-main);
       color: #FFFFFF;
-      box-shadow: 0 4px 15px rgba(11, 25, 44, 0.15);
+      box-shadow: 0 2px 8px rgba(11, 25, 44, 0.1);
     }
     /* Спільний робочий контейнер */
     main {
@@ -717,32 +718,32 @@
       background-color: var(--accent-blue);
       color: white;
     }
-    /* ДИЗАЙН ХМАРИ СЛІВ (Tag Cloud View) */
+    /* ДИЗАЙН ХМАРИ СЛІВ (Tag Cloud View - Гармонійніший та вирівняний стиль) */
     .tag-cloud-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
-      padding: 40px 20px;
-      background: radial-gradient(circle at center, rgba(30, 62, 98, 0.02) 0%, rgba(184, 0, 0, 0.02) 100%);
-      border-radius: 20px;
+      gap: 10px;
+      padding: 30px 20px;
+      background: radial-gradient(circle at center, rgba(30, 62, 98, 0.01) 0%, rgba(184, 0, 0, 0.01) 100%);
+      border-radius: 16px;
       border: 1.5px dashed var(--border-color);
-      min-height: 380px;
+      min-height: 250px;
     }
     .cloud-tag {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
+      gap: 6px;
+      padding: 6px 14px;
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       border: 1px solid transparent;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
     }
     .cloud-tag:hover {
-      transform: scale(1.08) translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      transform: scale(1.06) translateY(-1px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
     }
     /* Категорії хмари */
     .cloud-tag.tag-word {
@@ -781,11 +782,11 @@
       background-color: var(--text-muted);
       color: white;
     }
-    /* Класи розмірів */
-    .f-size-sm { font-size: 0.8rem; font-weight: 500; }
-    .f-size-md { font-size: 1rem; font-weight: 600; }
-    .f-size-lg { font-size: 1.15rem; font-weight: 700; }
-    .f-size-xl { font-size: 1.3rem; font-weight: 800; }
+    /* Співвідношення розмірів (М'якші та естетичні переходи) */
+    .f-size-sm { font-size: 0.85rem; font-weight: 600; }
+    .f-size-md { font-size: 0.92rem; font-weight: 700; }
+    .f-size-lg { font-size: 1rem; font-weight: 700; }
+    .f-size-xl { font-size: 1.05rem; font-weight: 800; }
     .cloud-tag-icon {
       font-size: 0.65rem;
       opacity: 0.7;
@@ -1014,7 +1015,7 @@
       border-top: 1px solid var(--border-color);
       margin-top: 50px;
     }
-    /* АДАПТИВНІСТЬ ДЛЯ ДЕСКТОПІВ (Rearranged Horizontal Header & Compact Panel) */
+    /* АДАПТИВНІСТЬ ДЛЯ ДЕСКТОПІВ (Rearranged Horizontal Header & Single Line Controls) */
     @media (min-width: 992px) {
       header {
         padding: 12px 20px;
@@ -1067,18 +1068,22 @@
       .stat-item strong {
         font-size: 1.05rem;
       }
+      /* Панель керування: Суворий один горизонтальний рядок */
+      .controls-card {
+        flex-wrap: nowrap;
+        padding: 10px 16px;
+      }
     }
-    @media (max-width: 768px) {
-      h1 { font-size: 1.5rem; }
-      .subtitle { font-size: 0.85rem; margin-bottom: 12px; }
-      header { padding: 20px 15px 15px; }
+    @media (max-width: 991px) {
       .controls-card {
         flex-direction: column;
         align-items: stretch;
+        gap: 15px;
       }
       .filter-group, .sort-group {
         flex-direction: column;
         align-items: flex-start;
+        width: 100%;
       }
       .type-filter-buttons {
         width: 100%;
@@ -1094,6 +1099,17 @@
       .sort-select {
         width: 100%;
       }
+      .view-tabs-container {
+        width: 100%;
+      }
+      .view-tab-btn {
+        flex: 1;
+      }
+    }
+    @media (max-width: 768px) {
+      h1 { font-size: 1.5rem; }
+      .subtitle { font-size: 0.85rem; margin-bottom: 12px; }
+      header { padding: 20px 15px 15px; }
       .floating-controls-panel {
         bottom: 15px;
         left: 15px;
@@ -1172,8 +1188,9 @@
     </div>
   </header>
   <main>
-    <!-- Панель керування (Фільтри та Сортування) -->
+    <!-- Панель керування (Фільтри, Таби та Сортування) -->
     <div class="controls-card">
+      <!-- 1. Фільтр типу картки -->
       <div class="filter-group">
         <span class="control-label">Тип картки:</span>
         <div class="type-filter-buttons" id="typeFilters">
@@ -1183,6 +1200,22 @@
           <button class="filter-btn" data-type="Кіно">Кіно</button>
         </div>
       </div>
+      <!-- 2. Перемикач режимів перегляду (Перенесено сюди) -->
+      <div class="view-tabs-container">
+        <button class="view-tab-btn active" id="tab-cards" data-view="cards">
+          <i data-lucide="layout-grid"></i>
+          <span>Картки</span>
+        </button>
+        <button class="view-tab-btn" id="tab-table" data-view="table">
+          <i data-lucide="list"></i>
+          <span>Таблиця</span>
+        </button>
+        <button class="view-tab-btn" id="tab-cloud" data-view="cloud">
+          <i data-lucide="cloud"></i>
+          <span>Хмара слів</span>
+        </button>
+      </div>
+      <!-- 3. Сортування -->
       <div class="sort-group">
         <span class="control-label" for="sortSelect">Сортувати:</span>
         <div class="sort-select-wrapper">
@@ -1197,21 +1230,6 @@
           <i data-lucide="chevron-down" class="sort-icon"></i>
         </div>
       </div>
-    </div>
-    <!-- Вкладки режимів перегляду -->
-    <div class="view-tabs-container">
-      <button class="view-tab-btn active" id="tab-cards" data-view="cards">
-        <i data-lucide="layout-grid"></i>
-        <span>Картки</span>
-      </button>
-      <button class="view-tab-btn" id="tab-table" data-view="table">
-        <i data-lucide="list"></i>
-        <span>Таблиця</span>
-      </button>
-      <button class="view-tab-btn" id="tab-cloud" data-view="cloud">
-        <i data-lucide="cloud"></i>
-        <span>Хмара слів</span>
-      </button>
     </div>
     <!-- Область очікування завантаження -->
     <div id="loadingState" class="loading-state">
@@ -1407,7 +1425,7 @@
         url = urlMatch[1];
         // Перевірка та балансування закриваючих дужок в кінці URL (наприклад: ...Shepherd_(2006_film))
         let openCount = (url.match(/\(/g) || []).length;
-        let closeCount = (url.match(/\(/g) || []).length;
+        let closeCount = (url.match(/\)/g) || []).length;
         while (closeCount > openCount && url.endsWith(')')) {
           url = url.slice(0, -1);
           closeCount--;
@@ -2013,8 +2031,11 @@
       cardsGrid.innerHTML = '';
       const grouped = groupItemsForCards(data);
       grouped.forEach(group => {
-        const movieItem = findMovieByUrl(group[0].url);
-        const primaryItem = movieItem || group[0];
+        const primaryItem = group[0];
+        const movieItem = findMovieByUrl(primaryItem.url);
+        // Мала плашка в шапці показується ТІЛЬКИ якщо сама картка не є карткою фільму
+        const isMovieInGroup = group.some(item => item.typeClass === 'movie');
+        const showMovieHeaderBadge = movieItem && !isMovieInGroup;
         const mediaHtml = buildMediaHtml(primaryItem);
         // Створюємо внутрішній контент картки для всіх згрупованих елементів
         const bodyHtml = group.map((item, idx) => {
@@ -2052,7 +2073,7 @@
                     <i data-lucide="${primaryItem.typeIcon}"></i>
                     ${primaryItem.type}
                   </span>
-                  ${movieItem ? `
+                  ${showMovieHeaderBadge ? `
                     <span class="card-movie-header">
                       <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${movieItem.english} ${movieItem.movieYear ? `(${movieItem.movieYear})` : ''}
                     </span>
@@ -2144,8 +2165,10 @@
         const normalizedUrl = item.url.trim().toLowerCase();
         group = allParsedItems.filter(i => i.url && i.url.trim().toLowerCase() === normalizedUrl);
       }
-      const movieItem = findMovieByUrl(group[0].url);
-      const primaryItem = movieItem || group[0];
+      const primaryItem = group[0];
+      const movieItem = findMovieByUrl(primaryItem.url);
+      const isMovieInGroup = group.some(i => i.typeClass === 'movie');
+      const showMovieHeaderBadge = movieItem && !isMovieInGroup;
       const mediaHtml = buildMediaHtml(primaryItem, true);
       const bodyHtml = group.map((gItem, idx) => {
         const commentHtml = gItem.comment ? `
@@ -2178,7 +2201,7 @@
               <i data-lucide="${primaryItem.typeIcon}"></i>
               ${primaryItem.type}
             </span>
-            ${movieItem ? `
+            ${showMovieHeaderBadge ? `
               <span class="card-movie-header">
                 <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${movieItem.english} ${movieItem.movieYear ? `(${movieItem.movieYear})` : ''}
               </span>
