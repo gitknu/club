@@ -1323,7 +1323,7 @@
           if (!res.ok) throw new Error("Помилка мережі при запиті до Google Sheets");
           return res.text();
         })
-        .then(text => {
+        .then(async text => {
           // Парсинг JSON-відповіді з gviz/tq (відрізаємо обгортку)
           const rawData = text.substring(text.indexOf('({') + 1, text.lastIndexOf('})') + 1);
           const parsedJson = JSON.parse(rawData);
@@ -1333,6 +1333,10 @@
           }
 
           processTableData(parsedJson.table);
+          
+          // Виклик інтелектуальних покращень (Wiki та Медіа метадані)
+          await enhanceItemsWithWikipedia();
+
           showLoading(false);
           updateAppUI();
         })
@@ -1341,6 +1345,177 @@
           showLoading(false);
           showError(true);
         });
+    }
+
+    /**
+     * Покращене виділення року зі стрічки
+     */
+    function extractYearFromString(str) {
+      if (!str) return null;
+      const match = str.match(/\b(19\d\d|20\d\d)\b/);
+      return match ? match[1] : null;
+    }
+
+    /**
+     * Конвертація сирої дати в український локалізований формат
+     */
+    function formatDateToUkrainian(dateStr) {
+      if (!dateStr || dateStr === "—" || dateStr.trim() === "") return "—";
+      
+      let day, month, year;
+      
+      // Спроба розбору DD.MM.YYYY або DD/MM/YYYY
+      const parts = dateStr.split(/[\.\/]/);
+      if (parts.length === 3) {
+        if (parts[2].length === 4) {
+          day = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10) - 1; // 0-індексований
+          year = parseInt(parts[2], 10);
+        } else if (parts[0].length === 4) {
+          year = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10) - 1;
+          day = parseInt(parts[2], 10);
+        }
+      } else {
+        // Спроба розбору YYYY-MM-DD
+        const isoParts = dateStr.split('-');
+        if (isoParts.length === 3) {
+          year = parseInt(isoParts[0], 10);
+          month = parseInt(isoParts[1], 10) - 1;
+          day = parseInt(isoParts[2], 10);
+        }
+      }
+
+      // Якщо базовий розбір не вдався, задіюємо нативний парсер
+      if (isNaN(day) || isNaN(month) || isNaN(year)) {
+        const jsDate = new Date(dateStr);
+        if (!isNaN(jsDate.getTime())) {
+          day = jsDate.getDate();
+          month = jsDate.getMonth();
+          year = jsDate.getFullYear();
+        } else {
+          return dateStr; // Повертаємо без змін
+        }
+      }
+
+      const ukrainianMonths = [
+        "січня", "лютого", "березня", "квітня", "травня", "червня",
+        "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"
+      ];
+
+      if (month >= 0 && month < 12) {
+        return `${day} ${ukrainianMonths[month]} ${year}`;
+      }
+      
+      return dateStr;
+    }
+
+    /**
+     * Інтелектуальний імпорт метаданих з API Wikipedia
+     */
+    async function enhanceItemsWithWikipedia() {
+      const wikiPromises = allParsedItems.map(async (item) => {
+        // Базове форматування для фільмів без посилання або для сторонніх джерел
+        if (item.typeClass === 'movie' && !item.url) {
+          let existingYear = extractYearFromString(item.english);
+          let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
+          if (existingYear) {
+            item.english = `${cleanName} [${existingYear}]`;
+          } else {
+            item.english = cleanName;
+          }
+          return;
+        }
+
+        if (!item.url) return;
+
+        const match = item.url.match(/https?:\/\/([a-zA-Z0-9-]+)\.wikipedia\.org\/wiki\/([^#?]+)/i);
+        if (!match) {
+          if (item.typeClass === 'movie') {
+            let existingYear = extractYearFromString(item.english);
+            let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
+            if (existingYear) {
+              item.english = `${cleanName} [${existingYear}]`;
+            } else {
+              item.english = cleanName;
+            }
+          }
+          return;
+        }
+
+        const lang = match[1];
+        const rawTitle = match[2];
+        const title = decodeURIComponent(rawTitle);
+
+        // API запит до відповідного мовного розділу Wikipedia
+        const apiReqUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages|description&format=json&piprop=thumbnail&pithumbsize=400&origin=*`;
+
+        try {
+          const res = await fetch(apiReqUrl);
+          if (!res.ok) throw new Error("Помилка запиту");
+          const data = await res.json();
+          const pages = data.query?.pages;
+          if (!pages) return;
+
+          const pageId = Object.keys(pages)[0];
+          const page = pages[pageId];
+          if (page && pageId !== "-1") {
+            // Зберігаємо посилання на зображення
+            if (page.thumbnail && page.thumbnail.source) {
+              item.wikiImageUrl = page.thumbnail.source;
+            }
+
+            // Пошук року у описі статті
+            let wikiYear = null;
+            if (page.description) {
+              const descYear = extractYearFromString(page.description);
+              if (descYear) wikiYear = descYear;
+            }
+
+            // Альтернативний пошук року в оригінальному заголовку URL
+            const urlYear = extractYearFromString(title);
+            if (urlYear) wikiYear = urlYear;
+
+            // Збираємо повну назву як: NAME [YEAR]
+            if (item.typeClass === 'movie') {
+              let existingYear = extractYearFromString(item.english);
+              let finalYear = existingYear || wikiYear;
+              let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
+
+              if (finalYear) {
+                item.english = `${cleanName} [${finalYear}]`;
+              } else {
+                item.english = cleanName;
+              }
+            }
+          } else {
+            // Форматуємо назву у разі відсутності сторінки
+            if (item.typeClass === 'movie') {
+              let existingYear = extractYearFromString(item.english);
+              let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
+              if (existingYear) {
+                item.english = `${cleanName} [${existingYear}]`;
+              } else {
+                item.english = cleanName;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("Wikipedia API error for item:", item.id, e);
+          // Безпечний фолбек
+          if (item.typeClass === 'movie') {
+            let existingYear = extractYearFromString(item.english);
+            let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
+            if (existingYear) {
+              item.english = `${cleanName} [${existingYear}]`;
+            } else {
+              item.english = cleanName;
+            }
+          }
+        }
+      });
+
+      await Promise.all(wikiPromises);
     }
 
     /**
@@ -1490,7 +1665,8 @@
 
         allParsedItems.push({
           id: id || String(allParsedItems.length + 1),
-          date: date || "—",
+          rawDate: date || "—",                 // Зберігаємо первинний формат для коректного сортування
+          date: formatDateToUkrainian(date),   // Конвертуємо у локалізований формат
           rawLink,
           url,
           mediaTitle,
@@ -1649,18 +1825,26 @@
     }
 
     /**
-     * Конвертація DD.MM.YYYY в об'єкт Date для сортування
+     * Конвертація DD.MM.YYYY в об'єкт Date для сортування (з підтримкою розширених форматів)
      */
     function parseDateString(dateStr) {
       if (!dateStr || dateStr === "—") return new Date(0);
-      const parts = dateStr.split('.');
+      let day, month, year;
+      const parts = dateStr.split(/[\.\/-]/);
       if (parts.length === 3) {
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1;
-        const year = parseInt(parts[2], 10);
+        if (parts[2].length === 4) {
+          day = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10) - 1;
+          year = parseInt(parts[2], 10);
+        } else if (parts[0].length === 4) {
+          year = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10) - 1;
+          day = parseInt(parts[2], 10);
+        }
         return new Date(year, month, day);
       }
-      return new Date(0);
+      const jsDate = new Date(dateStr);
+      return isNaN(jsDate.getTime()) ? new Date(0) : jsDate;
     }
 
     /**
@@ -1701,9 +1885,9 @@
       } else if (sortKey === 'en-desc') {
         data.sort((a, b) => b.english.localeCompare(a.english));
       } else if (sortKey === 'date-desc') {
-        data.sort((a, b) => parseDateString(b.date) - parseDateString(a.date));
+        data.sort((a, b) => parseDateString(b.rawDate) - parseDateString(a.rawDate));
       } else if (sortKey === 'date-asc') {
-        data.sort((a, b) => parseDateString(a.date) - parseDateString(b.date));
+        data.sort((a, b) => parseDateString(a.rawDate) - parseDateString(b.rawDate));
       } else if (sortKey === 'trans-asc') {
         data.sort((a, b) => a.translation.localeCompare(b.translation));
       } else if (sortKey === 'trans-desc') {
@@ -1762,7 +1946,7 @@
     }
 
     /**
-     * Побудова медіа блоку картки
+     * Побудова медіа блоку картки з підтримкою Wikipedia Image Preview
      */
     function buildMediaHtml(item, isModal = false) {
       if (!item.url) return '';
@@ -1781,6 +1965,20 @@
               </div>
               <span class="media-caption">${item.mediaTitle}</span>
             </div>
+          </div>
+        `;
+      } else if (item.wikiImageUrl) {
+        return `
+          <div class="card-media" id="${containerId}">
+            <a href="${item.url}" target="_blank" class="youtube-preview" title="Читати статтю Wikipedia" style="display: block; text-decoration: none;">
+              <img src="${item.wikiImageUrl}" alt="${item.mediaTitle}" style="object-fit: contain; background-color: #f1f5f9;">
+              <div class="youtube-overlay" style="background: rgba(0, 0, 0, 0.12);">
+                <div class="youtube-play-btn" style="background-color: var(--accent-purple); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);">
+                  <i data-lucide="external-link"></i>
+                </div>
+              </div>
+              <span class="media-caption">${item.mediaTitle}</span>
+            </a>
           </div>
         `;
       } else {
