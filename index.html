@@ -83,6 +83,13 @@
       margin-bottom: 6px;
       letter-spacing: 0.5px;
       border: 1px solid rgba(255, 255, 255, 0.15);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .live-indicator:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
     }
     .live-dot {
       width: 8px;
@@ -305,7 +312,7 @@
     .view-tab-btn.active {
       background-color: var(--text-main);
       color: #FFFFFF;
-      box-shadow: 0 2px 8px rgba(11, 25, 44, 0.1);
+      box-shadow: 2px 8px rgba(11, 25, 44, 0.1);
     }
     /* Спільний робочий контейнер */
     main {
@@ -1007,6 +1014,21 @@
     .no-results p {
       font-size: 0.85rem;
     }
+    /* Стилі для кнопки редагування */
+    .edit-row-btn {
+      color: var(--text-muted);
+      opacity: 0.7;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .edit-row-btn:hover {
+      color: var(--primary-red) !important;
+      opacity: 1;
+      transform: scale(1.15);
+    }
     footer {
       text-align: center;
       padding: 30px 20px;
@@ -1221,10 +1243,10 @@
   <header>
     <div class="header-container">
       <div class="header-branding">
-        <div class="live-indicator">
+        <a href="https://docs.google.com/spreadsheets/d/1ypr_sWk0crqfRtMt6AggAWI2x4wBLDWOKmiMpcM0ebA/edit#gid=0" target="_blank" class="live-indicator">
           <div class="live-dot"></div>
           <span>Наживо з Google Sheets</span>
-        </div>
+        </a>
         <h1>The Breakfast Club</h1>
         <p class="subtitle">Словник виразів, слів та медіа клубу</p>
       </div>
@@ -1343,7 +1365,7 @@
               <th id="th-english">Англійська <i data-lucide="arrow-up-down"></i></th>
               <th id="th-translation">Переклад <i data-lucide="arrow-up-down"></i></th>
               <th>Коментар</th>
-              <th style="width: 150px; text-align: center;">Медіа</th>
+              <th style="width: 180px; text-align: center;">Медіа / Дії</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -1687,6 +1709,7 @@
         }
         allParsedItems.push({
           id: id || String(allParsedItems.length + 1),
+          sheetRow: i + 1, // Зберігаємо точний індекс рядка в Google Sheets
           date: date || "—",
           rawLink,
           url,
@@ -1964,6 +1987,37 @@
       return Array.from(groupMap.values());
     }
     /**
+     * Групує елементи всередині групи за англійським словом для уникнення дублікатів
+     */
+    function mergeDuplicateWordsInGroup(group) {
+      const mergedMap = new Map();
+      group.forEach(item => {
+        const key = item.english.toLowerCase().trim();
+        if (!mergedMap.has(key)) {
+          mergedMap.set(key, {
+            english: item.english,
+            type: item.type,
+            typeClass: item.typeClass,
+            typeIcon: item.typeIcon,
+            movieYear: item.movieYear,
+            translations: [item.translation],
+            comments: item.comment ? [item.comment] : [],
+            sourceItems: [item]
+          });
+        } else {
+          const existing = mergedMap.get(key);
+          if (item.translation && item.translation !== "—" && !existing.translations.includes(item.translation)) {
+            existing.translations.push(item.translation);
+          }
+          if (item.comment && !existing.comments.includes(item.comment)) {
+            existing.comments.push(item.comment);
+          }
+          existing.sourceItems.push(item);
+        }
+      });
+      return Array.from(mergedMap.values());
+    }
+    /**
      * Рендеринг повідомлення "Нічого не знайдено"
      */
     function renderNoResults() {
@@ -2180,33 +2234,52 @@
         const mediaHtml = uniqueUrlItems.length > 0 
           ? `<div class="card-media-list" style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px; width: 100%;">${uniqueUrlItems.map(uItem => buildMediaHtml(uItem)).join('')}</div>`
           : '';
+        // Об'єднуємо дублікати слів у межах картки
+        const mergedWords = mergeDuplicateWordsInGroup(group);
         // Створюємо внутрішній контент картки для всіх згрупованих елементів
-        const bodyHtml = group.map((item, idx) => {
-          const commentHtml = item.comment ? `
+        const bodyHtml = mergedWords.map((merged, idx) => {
+          const joinedTranslation = merged.translations.filter(t => t && t !== "—").join(', ') || "—";
+          const commentsHtml = merged.comments.map(comm => `
             <div class="card-comment" style="margin-top: 6px;">
               <i data-lucide="quote" style="width: 12px; height: 12px; color: var(--primary-red); margin-top: 2px;"></i>
-              <span style="font-size: 0.75rem;">${item.comment}</span>
+              <span style="font-size: 0.75rem;">${comm}</span>
             </div>
-          ` : '';
+          `).join('');
+          // Посилання редагування для кожного джерела цього слова
+          const editLinksHtml = merged.sourceItems.map(srcItem => {
+            const editUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${GID}&range=A${srcItem.sheetRow}`;
+            return `
+              <a href="${editUrl}" target="_blank" class="edit-row-btn" title="Редагувати рядок #${srcItem.id} в Google Sheets" style="margin-left: 6px; display: inline-flex; align-items: center; vertical-align: middle;">
+                <i data-lucide="pen" style="width: 11px; height: 11px;"></i>
+              </a>
+            `;
+          }).join('');
           return `
             <div class="card-sub-item" style="${idx > 0 ? 'border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px;' : ''}">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                <h4 class="card-english" style="font-size: 1.15rem; margin-bottom: 0;">
-                  ${item.english}
-                  ${item.movieYear ? ` <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">(${item.movieYear})</span>` : ''}
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
+                <h4 class="card-english" style="font-size: 1.15rem; margin-bottom: 0; display: inline-flex; align-items: center; gap: 4px;">
+                  ${merged.english}
+                  ${merged.movieYear ? ` <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">(${merged.movieYear})</span>` : ''}
+                  ${editLinksHtml}
                 </h4>
                 ${group.length > 1 ? `
-                  <span class="badge badge-${item.typeClass}" style="font-size: 0.6rem; padding: 2px 6px;">
-                    ${item.type}
+                  <span class="badge badge-${merged.typeClass}" style="font-size: 0.6rem; padding: 2px 6px;">
+                    ${merged.type}
                   </span>
                 ` : ''}
               </div>
               <div class="card-divider" style="margin: 4px 0 8px;"></div>
-              <p class="card-translation" style="font-size: 0.9rem; margin-bottom: 4px;">${item.translation}</p>
-              ${commentHtml}
+              <p class="card-translation" style="font-size: 0.9rem; margin-bottom: 4px;">${joinedTranslation}</p>
+              ${commentsHtml}
             </div>
           `;
         }).join('');
+        // Кнопки швидкого редагування всього блоку рядків
+        const editBlockHtml = group.map(gItem => `
+          <a href="https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${GID}&range=A${gItem.sheetRow}" target="_blank" class="edit-row-btn" title="Редагувати рядок #${gItem.id} в Google Sheets" style="width: 20px; height: 20px; border-radius: 50%; background-color: var(--bg-light);">
+            <i data-lucide="pen" style="width: 10px; height: 10px;"></i>
+          </a>
+        `).join('');
         const cardHtml = `
           <div class="vocab-card card-${primaryItem.typeClass}">
             <div>
@@ -2218,7 +2291,10 @@
                   </span>
                   ${movieBadgesHtml}
                 </div>
-                <span class="card-meta">№ ${primaryItem.id} • ${primaryItem.date}</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="card-meta">№ ${primaryItem.id} • ${primaryItem.date}</span>
+                  ${editBlockHtml}
+                </div>
               </div>
               <div class="card-body">
                 ${bodyHtml}
@@ -2236,7 +2312,7 @@
     function renderTableView(data) {
       tableBody.innerHTML = '';
       data.forEach(item => {
-        let mediaBtnHtml = '—';
+        let mediaBtnHtml = '';
         if (item.url) {
           const btnClass = (item.youtubeId || item.wikiTitle) ? (item.youtubeId ? 'yt-link' : 'wiki-link') : 'wiki-link';
           const icon = item.youtubeId ? 'play' : 'external-link';
@@ -2248,6 +2324,14 @@
             </a>
           `;
         }
+        // Посилання редагування для конкретного рядка
+        const editUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${GID}&range=A${item.sheetRow}`;
+        const editBtnHtml = `
+          <a href="${editUrl}" target="_blank" class="table-media-link wiki-link" style="background-color: rgba(241, 245, 249, 1); color: var(--text-main);" title="Редагувати рядок #${item.id} в Google Sheets">
+            <i data-lucide="pen"></i>
+            <span>Редагувати</span>
+          </a>
+        `;
         const trHtml = `
           <tr>
             <td><strong>#${item.id}</strong></td>
@@ -2261,7 +2345,12 @@
             <td><span class="table-english">${getEnglishDisplay(item)}</span></td>
             <td><span class="table-translation">${item.translation}</span></td>
             <td><div class="table-comment" title="${item.comment || ''}">${item.comment || '—'}</div></td>
-            <td style="text-align: center;">${mediaBtnHtml}</td>
+            <td style="text-align: center;">
+              <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                ${mediaBtnHtml}
+                ${editBtnHtml}
+              </div>
+            </td>
           </tr>
         `;
         tableBody.insertAdjacentHTML('beforeend', trHtml);
@@ -2272,9 +2361,11 @@
      */
     function renderCloudView(data) {
       tagCloud.innerHTML = '';
-      data.forEach((item, index) => {
+      const grouped = groupItemsForCards(data);
+      grouped.forEach((group, index) => {
+        const primaryItem = group[0];
+        const displayEng = getEnglishDisplay(primaryItem);
         let sizeClass = 'f-size-md';
-        const displayEng = getEnglishDisplay(item);
         const length = displayEng.length;
         if (length < 8) {
           sizeClass = index % 2 === 0 ? 'f-size-sm' : 'f-size-md';
@@ -2284,9 +2375,9 @@
           sizeClass = 'f-size-xl';
         }
         const tagHtml = `
-          <button class="cloud-tag tag-${item.typeClass} ${sizeClass}" onclick="openModal('${item.id}')">
+          <button class="cloud-tag tag-${primaryItem.typeClass} ${sizeClass}" onclick="openModal('${primaryItem.id}')">
             <span>${displayEng}</span>
-            <i data-lucide="${item.typeIcon}" class="cloud-tag-icon"></i>
+            <i data-lucide="${primaryItem.typeIcon}" class="cloud-tag-icon"></i>
           </button>
         `;
         tagCloud.insertAdjacentHTML('beforeend', tagHtml);
@@ -2339,27 +2430,38 @@
       const mediaHtml = uniqueUrlItems.length > 0 
         ? `<div class="card-media-list" style="display: flex; flex-direction: column; gap: 12px; margin-top: 18px; width: 100%;">${uniqueUrlItems.map(uItem => buildMediaHtml(uItem, true)).join('')}</div>`
         : '';
-      const bodyHtml = group.map((gItem, idx) => {
-        const commentHtml = gItem.comment ? `
+      const mergedWords = mergeDuplicateWordsInGroup(group);
+      const bodyHtml = mergedWords.map((merged, idx) => {
+        const joinedTranslation = merged.translations.filter(t => t && t !== "—").join(', ') || "—";
+        const commentsHtml = merged.comments.map(comm => `
           <div class="card-comment" style="margin-top: 6px;">
             <i data-lucide="quote" style="width: 12px; height: 12px; color: var(--primary-red); margin-top: 2px;"></i>
-            <span>${gItem.comment}</span>
+            <span>${comm}</span>
           </div>
-        ` : '';
+        `).join('');
+        const editLinksHtml = merged.sourceItems.map(srcItem => {
+          const editUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${GID}&range=A${srcItem.sheetRow}`;
+          return `
+            <a href="${editUrl}" target="_blank" class="edit-row-btn" title="Редагувати рядок #${srcItem.id} в Google Sheets" style="margin-left: 6px; display: inline-flex; align-items: center; vertical-align: middle;">
+              <i data-lucide="pen" style="width: 13px; height: 13px;"></i>
+            </a>
+          `;
+        }).join('');
         return `
           <div class="modal-sub-item" style="${idx > 0 ? 'border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;' : ''}">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-              <h3 class="card-english" style="font-size: 1.4rem; margin-bottom: 0;">
-                ${gItem.english}
-                ${gItem.movieYear ? ` <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">(${gItem.movieYear})</span>` : ''}
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
+              <h3 class="card-english" style="font-size: 1.4rem; margin-bottom: 0; display: inline-flex; align-items: center; gap: 4px;">
+                ${merged.english}
+                ${merged.movieYear ? ` <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">(${merged.movieYear})</span>` : ''}
+                ${editLinksHtml}
               </h3>
-              <span class="badge badge-${gItem.typeClass}">
-                <i data-lucide="${gItem.typeIcon}"></i>
-                ${gItem.type}
+              <span class="badge badge-${merged.typeClass}">
+                <i data-lucide="${merged.typeIcon}"></i>
+                ${merged.type}
               </span>
             </div>
-            <p class="card-translation" style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 4px;">${gItem.translation}</p>
-            ${commentHtml}
+            <p class="card-translation" style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 4px;">${joinedTranslation}</p>
+            ${commentsHtml}
           </div>
         `;
       }).join('');
@@ -2372,7 +2474,14 @@
             </span>
             ${movieBadgesHtml}
           </div>
-          <span class="card-meta">№ ${primaryItem.id} • ${primaryItem.date}</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="card-meta">№ ${primaryItem.id} • ${primaryItem.date}</span>
+            ${group.map(gItem => `
+              <a href="https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${GID}&range=A${gItem.sheetRow}" target="_blank" class="edit-row-btn" title="Редагувати рядок #${gItem.id} в Google Sheets" style="width: 22px; height: 22px; border-radius: 50%; background-color: var(--bg-light);">
+                <i data-lucide="pen" style="width: 11px; height: 11px;"></i>
+              </a>
+            `).join('')}
+          </div>
         </div>
         <div class="modal-body-content" style="margin-bottom: 20px;">
           ${bodyHtml}
