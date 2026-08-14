@@ -1,3 +1,4 @@
+--- START OF FILE Paste August 14, 2026 - 3:05PM ---
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -515,6 +516,76 @@
     }
 
     .youtube-play-btn i {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ДИЗАЙН ВІКІПЕДІЇ */
+    .wikipedia-preview {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-color: #E2E8F0;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
+      text-decoration: none;
+    }
+
+    .wikipedia-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .wikipedia-preview img.loaded {
+      opacity: 1;
+    }
+
+    .wikipedia-preview:hover img.loaded {
+      transform: scale(1.04);
+    }
+
+    .wiki-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .wikipedia-preview:hover .wiki-overlay {
+      background-color: rgba(15, 23, 42, 0.3);
+    }
+
+    .wiki-logo-btn {
+      width: 44px;
+      height: 44px;
+      background-color: var(--accent-purple);
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .wikipedia-preview:hover .wiki-logo-btn {
+      transform: scale(1.12);
+    }
+
+    .wiki-logo-btn i {
       width: 18px;
       height: 18px;
     }
@@ -1323,7 +1394,7 @@
           if (!res.ok) throw new Error("Помилка мережі при запиті до Google Sheets");
           return res.text();
         })
-        .then(async text => {
+        .then(text => {
           // Парсинг JSON-відповіді з gviz/tq (відрізаємо обгортку)
           const rawData = text.substring(text.indexOf('({') + 1, text.lastIndexOf('})') + 1);
           const parsedJson = JSON.parse(rawData);
@@ -1333,10 +1404,6 @@
           }
 
           processTableData(parsedJson.table);
-          
-          // Виклик інтелектуальних покращень (Wiki та Медіа метадані)
-          await enhanceItemsWithWikipedia();
-
           showLoading(false);
           updateAppUI();
         })
@@ -1348,174 +1415,70 @@
     }
 
     /**
-     * Покращене виділення року зі стрічки
+     * Конвертує числову дату у формат українського тексту
      */
-    function extractYearFromString(str) {
-      if (!str) return null;
-      const match = str.match(/\b(19\d\d|20\d\d)\b/);
-      return match ? match[1] : null;
+    function convertToUkr(day, month, year) {
+      const ukrMonths = [
+        "січня", "лютого", "березня", "квітня", "травня", "червня",
+        "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"
+      ];
+      if (month >= 1 && month <= 12) {
+        return `${day} ${ukrMonths[month - 1]} ${year}`;
+      }
+      return `${day}.${month}.${year}`;
     }
 
     /**
-     * Конвертація сирої дати в український локалізований формат
+     * Розумний конвертер дати в європейський формат з українськими назвами місяців
      */
     function formatDateToUkrainian(dateStr) {
       if (!dateStr || dateStr === "—" || dateStr.trim() === "") return "—";
       
-      let day, month, year;
+      let cleanStr = dateStr.trim();
       
-      // Спроба розбору DD.MM.YYYY або DD/MM/YYYY
-      const parts = dateStr.split(/[\.\/]/);
-      if (parts.length === 3) {
-        if (parts[2].length === 4) {
-          day = parseInt(parts[0], 10);
-          month = parseInt(parts[1], 10) - 1; // 0-індексований
-          year = parseInt(parts[2], 10);
-        } else if (parts[0].length === 4) {
-          year = parseInt(parts[0], 10);
-          month = parseInt(parts[1], 10) - 1;
-          day = parseInt(parts[2], 10);
-        }
-      } else {
-        // Спроба розбору YYYY-MM-DD
-        const isoParts = dateStr.split('-');
-        if (isoParts.length === 3) {
-          year = parseInt(isoParts[0], 10);
-          month = parseInt(isoParts[1], 10) - 1;
-          day = parseInt(isoParts[2], 10);
-        }
+      // Перевіряємо формат дати з Google Sheets JSON: Date(2026,7,14) (місяці починаються з 0)
+      if (cleanStr.startsWith("Date(") && cleanStr.endsWith(")")) {
+        try {
+          const parts = cleanStr.slice(5, -1).split(',');
+          const year = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) + 1;
+          const day = parseInt(parts[2], 10);
+          return convertToUkr(day, month, year);
+        } catch (e) {}
       }
 
-      // Якщо базовий розбір не вдався, задіюємо нативний парсер
-      if (isNaN(day) || isNaN(month) || isNaN(year)) {
-        const jsDate = new Date(dateStr);
-        if (!isNaN(jsDate.getTime())) {
-          day = jsDate.getDate();
-          month = jsDate.getMonth();
-          year = jsDate.getFullYear();
-        } else {
-          return dateStr; // Повертаємо без змін
-        }
+      // Перевіряємо формат DD.MM.YYYY, DD-MM-YYYY, DD/MM/YYYY
+      const dmyRegex = /^(\d{1,2})[./-](\d{1,2})[./-](\d{4}|\d{2})$/;
+      const matchDmy = cleanStr.match(dmyRegex);
+      if (matchDmy) {
+        let day = parseInt(matchDmy[1], 10);
+        let month = parseInt(matchDmy[2], 10);
+        let year = parseInt(matchDmy[3], 10);
+        if (year < 100) year += 2000;
+        return convertToUkr(day, month, year);
       }
 
-      const ukrainianMonths = [
-        "січня", "лютого", "березня", "квітня", "травня", "червня",
-        "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"
-      ];
-
-      if (month >= 0 && month < 12) {
-        return `${day} ${ukrainianMonths[month]} ${year}`;
+      // Перевіряємо формат YYYY-MM-DD
+      const ymdRegex = /^(\d{4})[./-](\d{1,2})[./-](\d{1,2})$/;
+      const matchYmd = cleanStr.match(ymdRegex);
+      if (matchYmd) {
+        let year = parseInt(matchYmd[1], 10);
+        let month = parseInt(matchYmd[2], 10);
+        let day = parseInt(matchYmd[3], 10);
+        return convertToUkr(day, month, year);
       }
-      
+
       return dateStr;
     }
 
     /**
-     * Інтелектуальний імпорт метаданих з API Wikipedia
+     * Повертає повне відформатоване ім'я для відображення: NAME [YEAR] (якщо це фільм)
      */
-    async function enhanceItemsWithWikipedia() {
-      const wikiPromises = allParsedItems.map(async (item) => {
-        // Базове форматування для фільмів без посилання або для сторонніх джерел
-        if (item.typeClass === 'movie' && !item.url) {
-          let existingYear = extractYearFromString(item.english);
-          let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
-          if (existingYear) {
-            item.english = `${cleanName} [${existingYear}]`;
-          } else {
-            item.english = cleanName;
-          }
-          return;
-        }
-
-        if (!item.url) return;
-
-        const match = item.url.match(/https?:\/\/([a-zA-Z0-9-]+)\.wikipedia\.org\/wiki\/([^#?]+)/i);
-        if (!match) {
-          if (item.typeClass === 'movie') {
-            let existingYear = extractYearFromString(item.english);
-            let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
-            if (existingYear) {
-              item.english = `${cleanName} [${existingYear}]`;
-            } else {
-              item.english = cleanName;
-            }
-          }
-          return;
-        }
-
-        const lang = match[1];
-        const rawTitle = match[2];
-        const title = decodeURIComponent(rawTitle);
-
-        // API запит до відповідного мовного розділу Wikipedia
-        const apiReqUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages|description&format=json&piprop=thumbnail&pithumbsize=400&origin=*`;
-
-        try {
-          const res = await fetch(apiReqUrl);
-          if (!res.ok) throw new Error("Помилка запиту");
-          const data = await res.json();
-          const pages = data.query?.pages;
-          if (!pages) return;
-
-          const pageId = Object.keys(pages)[0];
-          const page = pages[pageId];
-          if (page && pageId !== "-1") {
-            // Зберігаємо посилання на зображення
-            if (page.thumbnail && page.thumbnail.source) {
-              item.wikiImageUrl = page.thumbnail.source;
-            }
-
-            // Пошук року у описі статті
-            let wikiYear = null;
-            if (page.description) {
-              const descYear = extractYearFromString(page.description);
-              if (descYear) wikiYear = descYear;
-            }
-
-            // Альтернативний пошук року в оригінальному заголовку URL
-            const urlYear = extractYearFromString(title);
-            if (urlYear) wikiYear = urlYear;
-
-            // Збираємо повну назву як: NAME [YEAR]
-            if (item.typeClass === 'movie') {
-              let existingYear = extractYearFromString(item.english);
-              let finalYear = existingYear || wikiYear;
-              let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
-
-              if (finalYear) {
-                item.english = `${cleanName} [${finalYear}]`;
-              } else {
-                item.english = cleanName;
-              }
-            }
-          } else {
-            // Форматуємо назву у разі відсутності сторінки
-            if (item.typeClass === 'movie') {
-              let existingYear = extractYearFromString(item.english);
-              let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
-              if (existingYear) {
-                item.english = `${cleanName} [${existingYear}]`;
-              } else {
-                item.english = cleanName;
-              }
-            }
-          }
-        } catch (e) {
-          console.warn("Wikipedia API error for item:", item.id, e);
-          // Безпечний фолбек
-          if (item.typeClass === 'movie') {
-            let existingYear = extractYearFromString(item.english);
-            let cleanName = item.english.replace(/\s*[\(\[].*?[\)\]]/g, '').trim();
-            if (existingYear) {
-              item.english = `${cleanName} [${existingYear}]`;
-            } else {
-              item.english = cleanName;
-            }
-          }
-        }
-      });
-
-      await Promise.all(wikiPromises);
+    function getEnglishDisplay(item) {
+      if (item.typeClass === 'movie' && item.movieYear) {
+        return `${item.english} [${item.movieYear}]`;
+      }
+      return item.english;
     }
 
     /**
@@ -1589,7 +1552,8 @@
         };
 
         const id = getVal(idxId);
-        const date = getVal(idxDate);
+        const rawDate = getVal(idxDate);
+        const date = formatDateToUkrainian(rawDate);
         const rawLink = getVal(idxLink);
         const type = getVal(idxType);
         const english = getVal(idxEnglish);
@@ -1640,6 +1604,17 @@
           }
         }
 
+        // Парсинг деталей Вікіпедії (мова та заголовок сторінки)
+        let wikiLang = "";
+        let wikiTitle = "";
+        if (url) {
+          const wikiMatch = url.match(/https?:\/\/([a-z]+)\.wikipedia\.org\/wiki\/([^\s?#]+)/);
+          if (wikiMatch) {
+            wikiLang = wikiMatch[1];
+            wikiTitle = wikiMatch[2];
+          }
+        }
+
         // Класифікація категорій для забарвлення
         let typeClass = "other";
         let typeIcon = "hash";
@@ -1663,18 +1638,45 @@
           cleanType = cleanType || "Інше";
         }
 
+        // Розумне відділення року випуску від англійської назви фільму
+        let englishName = english;
+        let movieYear = "";
+
+        if (typeClass === 'movie') {
+          englishName = englishName.trim().replace(/\s+/g, ' ');
+          
+          // 1. Спроба витягнути рік у дужках чи квадратних дужках будь-де
+          const bracketMatch = englishName.match(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/);
+          if (bracketMatch) {
+            movieYear = bracketMatch[1];
+            englishName = englishName.replace(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/g, '').trim();
+          } else {
+            // 2. Спроба витягнути вільний рік в кінці стрічки
+            const endMatch = englishName.match(/(?:[,\-\s]+)\b(19\d{2}|20\d{2})\b\s*$/);
+            if (endMatch) {
+              movieYear = endMatch[1];
+              englishName = englishName.replace(/(?:[,\-\s]+)\b(19\d{2}|20\d{2})\b\s*$/, '').trim();
+            }
+          }
+          // Очистка порожніх дужок після фільтрації
+          englishName = englishName.replace(/\(\s*\)|\[\s*\]|\{\s*\}/g, '').replace(/\s+/g, ' ').trim();
+        }
+
         allParsedItems.push({
           id: id || String(allParsedItems.length + 1),
-          rawDate: date || "—",                 // Зберігаємо первинний формат для коректного сортування
-          date: formatDateToUkrainian(date),   // Конвертуємо у локалізований формат
+          date: date || "—",
           rawLink,
           url,
           mediaTitle,
           youtubeId,
+          wikiLang,
+          wikiTitle,
+          wikiImageUrl: "", // Буде кешуватись при першому запиті до API Вікіпедії
           type: cleanType,
           typeClass,
           typeIcon,
-          english,
+          english: englishName,
+          movieYear: movieYear,
           translation,
           comment
         });
@@ -1825,26 +1827,38 @@
     }
 
     /**
-     * Конвертація DD.MM.YYYY в об'єкт Date для сортування (з підтримкою розширених форматів)
+     * Конвертація українського текстового запису дати назад в об'єкт Date для точного сортування
      */
     function parseDateString(dateStr) {
       if (!dateStr || dateStr === "—") return new Date(0);
-      let day, month, year;
-      const parts = dateStr.split(/[\.\/-]/);
+      
+      const ukrMonths = [
+        "січня", "лютого", "березня", "квітня", "травня", "червня",
+        "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"
+      ];
+      
+      const parts = dateStr.split(' ');
       if (parts.length === 3) {
-        if (parts[2].length === 4) {
-          day = parseInt(parts[0], 10);
-          month = parseInt(parts[1], 10) - 1;
-          year = parseInt(parts[2], 10);
-        } else if (parts[0].length === 4) {
-          year = parseInt(parts[0], 10);
-          month = parseInt(parts[1], 10) - 1;
-          day = parseInt(parts[2], 10);
+        const day = parseInt(parts[0], 10);
+        const monthStr = parts[1].toLowerCase();
+        const year = parseInt(parts[2], 10);
+        
+        const monthIndex = ukrMonths.indexOf(monthStr);
+        if (monthIndex !== -1 && !isNaN(day) && !isNaN(year)) {
+          return new Date(year, monthIndex, day);
         }
+      }
+      
+      // На випадок застарілого формату
+      const partsDot = dateStr.split('.');
+      if (partsDot.length === 3) {
+        const day = parseInt(partsDot[0], 10);
+        const month = parseInt(partsDot[1], 10) - 1;
+        const year = parseInt(partsDot[2], 10);
         return new Date(year, month, day);
       }
-      const jsDate = new Date(dateStr);
-      return isNaN(jsDate.getTime()) ? new Date(0) : jsDate;
+      
+      return new Date(0);
     }
 
     /**
@@ -1856,13 +1870,14 @@
       // Текстовий пошук
       if (searchTerm) {
         const term = searchTerm.toLowerCase();
-        data = data.filter(item => 
-          item.english.toLowerCase().includes(term) ||
-          item.translation.toLowerCase().includes(term) ||
-          item.comment.toLowerCase().includes(term) ||
-          item.date.toLowerCase().includes(term) ||
-          item.mediaTitle.toLowerCase().includes(term)
-        );
+        data = data.filter(item => {
+          const displayEng = getEnglishDisplay(item).toLowerCase();
+          return displayEng.includes(term) ||
+            item.translation.toLowerCase().includes(term) ||
+            item.comment.toLowerCase().includes(term) ||
+            item.date.toLowerCase().includes(term) ||
+            item.mediaTitle.toLowerCase().includes(term);
+        });
       }
 
       // Типовий фільтр
@@ -1881,13 +1896,13 @@
       } else if (sortKey === 'id-desc') {
         data.sort((a, b) => parseInt(b.id) - parseInt(a.id));
       } else if (sortKey === 'en-asc') {
-        data.sort((a, b) => a.english.localeCompare(b.english));
+        data.sort((a, b) => getEnglishDisplay(a).localeCompare(getEnglishDisplay(b)));
       } else if (sortKey === 'en-desc') {
-        data.sort((a, b) => b.english.localeCompare(a.english));
+        data.sort((a, b) => getEnglishDisplay(b).localeCompare(getEnglishDisplay(a)));
       } else if (sortKey === 'date-desc') {
-        data.sort((a, b) => parseDateString(b.rawDate) - parseDateString(a.rawDate));
+        data.sort((a, b) => parseDateString(b.date) - parseDateString(a.date));
       } else if (sortKey === 'date-asc') {
-        data.sort((a, b) => parseDateString(a.rawDate) - parseDateString(b.rawDate));
+        data.sort((a, b) => parseDateString(a.date) - parseDateString(b.date));
       } else if (sortKey === 'trans-asc') {
         data.sort((a, b) => a.translation.localeCompare(b.translation));
       } else if (sortKey === 'trans-desc') {
@@ -1918,6 +1933,7 @@
 
       if (currentView === 'cards') {
         renderCardsView(activeData);
+        fetchWikiImagesForVisibleCards(activeData);
       } else if (currentView === 'table') {
         renderTableView(activeData);
       } else if (currentView === 'cloud') {
@@ -1946,7 +1962,60 @@
     }
 
     /**
-     * Побудова медіа блоку картки з підтримкою Wikipedia Image Preview
+     * Завантаження зображення з Вікіпедії з кешуванням
+     */
+    function loadWikiImage(item, callback) {
+      if (!item.wikiTitle || !item.wikiLang) return;
+      
+      if (item.wikiImageUrl) {
+        callback(item.wikiImageUrl);
+        return;
+      }
+      
+      const apiUrl = `https://${item.wikiLang}.wikipedia.org/api/rest_v1/page/summary/${item.wikiTitle}`;
+      fetch(apiUrl)
+        .then(res => {
+          if (!res.ok) throw new Error();
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.thumbnail && data.thumbnail.source) {
+            item.wikiImageUrl = data.thumbnail.source;
+            callback(item.wikiImageUrl);
+          } else {
+            item.wikiImageUrl = "no-image";
+            callback(null);
+          }
+        })
+        .catch(() => {
+          item.wikiImageUrl = "no-image";
+          callback(null);
+        });
+    }
+
+    /**
+     * Отримує зображення Вікіпедії для поточних видимих карт
+     */
+    function fetchWikiImagesForVisibleCards(items) {
+      items.forEach(item => {
+        if (item.wikiTitle) {
+          const imgEl = document.getElementById(`wiki-img-${item.id}`);
+          if (imgEl && !imgEl.classList.contains('loaded')) {
+            loadWikiImage(item, (imgUrl) => {
+              if (imgUrl) {
+                imgEl.src = imgUrl;
+                imgEl.classList.add('loaded');
+              } else {
+                imgEl.style.display = 'none';
+              }
+            });
+          }
+        }
+      });
+    }
+
+    /**
+     * Побудова медіа блоку картки (підтримує YouTube, прев'ю Вікіпедії та звичайні посилання)
      */
     function buildMediaHtml(item, isModal = false) {
       if (!item.url) return '';
@@ -1967,14 +2036,18 @@
             </div>
           </div>
         `;
-      } else if (item.wikiImageUrl) {
+      } else if (item.wikiTitle) {
+        const imgId = isModal ? `modal-wiki-img-${item.id}` : `wiki-img-${item.id}`;
+        const srcUrl = (item.wikiImageUrl && item.wikiImageUrl !== 'no-image') ? item.wikiImageUrl : "data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3D%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox%3D'0 0 16 9'%2F%3E";
+        const loadedClass = (item.wikiImageUrl && item.wikiImageUrl !== 'no-image') ? "loaded" : "";
+        
         return `
           <div class="card-media" id="${containerId}">
-            <a href="${item.url}" target="_blank" class="youtube-preview" title="Читати статтю Wikipedia" style="display: block; text-decoration: none;">
-              <img src="${item.wikiImageUrl}" alt="${item.mediaTitle}" style="object-fit: contain; background-color: #f1f5f9;">
-              <div class="youtube-overlay" style="background: rgba(0, 0, 0, 0.12);">
-                <div class="youtube-play-btn" style="background-color: var(--accent-purple); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);">
-                  <i data-lucide="external-link"></i>
+            <a href="${item.url}" target="_blank" class="wikipedia-preview" title="Читати у Вікіпедії">
+              <img id="${imgId}" src="${srcUrl}" alt="${item.mediaTitle}" class="${loadedClass}">
+              <div class="wiki-overlay">
+                <div class="wiki-logo-btn">
+                  <i data-lucide="book-open"></i>
                 </div>
               </div>
               <span class="media-caption">${item.mediaTitle}</span>
@@ -2051,7 +2124,7 @@
                 <span class="card-meta">№ ${item.id} • ${item.date}</span>
               </div>
               <div class="card-body">
-                <h3 class="card-english">${item.english}</h3>
+                <h3 class="card-english">${getEnglishDisplay(item)}</h3>
                 <div class="card-divider"></div>
                 <p class="card-translation">${item.translation}</p>
                 ${commentHtml}
@@ -2072,7 +2145,7 @@
       data.forEach(item => {
         let mediaBtnHtml = '—';
         if (item.url) {
-          const btnClass = item.youtubeId ? 'yt-link' : 'wiki-link';
+          const btnClass = (item.youtubeId || item.wikiTitle) ? (item.youtubeId ? 'yt-link' : 'wiki-link') : 'wiki-link';
           const icon = item.youtubeId ? 'play' : 'external-link';
           const text = item.youtubeId ? 'Дивитись' : 'Посилання';
           mediaBtnHtml = `
@@ -2093,7 +2166,7 @@
                 ${item.type}
               </span>
             </td>
-            <td><span class="table-english">${item.english}</span></td>
+            <td><span class="table-english">${getEnglishDisplay(item)}</span></td>
             <td><span class="table-translation">${item.translation}</span></td>
             <td><div class="table-comment" title="${item.comment || ''}">${item.comment || '—'}</div></td>
             <td style="text-align: center;">${mediaBtnHtml}</td>
@@ -2112,7 +2185,8 @@
       data.forEach((item, index) => {
         // Органічний підбір розмірів на основі індексу/довжини
         let sizeClass = 'f-size-md';
-        const length = item.english.length;
+        const displayEng = getEnglishDisplay(item);
+        const length = displayEng.length;
         if (length < 8) {
           sizeClass = index % 2 === 0 ? 'f-size-sm' : 'f-size-md';
         } else if (length < 15) {
@@ -2123,7 +2197,7 @@
 
         const tagHtml = `
           <button class="cloud-tag tag-${item.typeClass} ${sizeClass}" onclick="openModal('${item.id}')">
-            <span>${item.english}</span>
+            <span>${displayEng}</span>
             <i data-lucide="${item.typeIcon}" class="cloud-tag-icon"></i>
           </button>
         `;
@@ -2154,7 +2228,7 @@
           </span>
           <span class="card-meta">№ ${item.id} • ${item.date}</span>
         </div>
-        <h2 class="card-english" style="font-size: 1.8rem; line-height: 1.3; margin-bottom: 10px;">${item.english}</h2>
+        <h2 class="card-english" style="font-size: 1.8rem; line-height: 1.3; margin-bottom: 10px;">${getEnglishDisplay(item)}</h2>
         <div class="card-divider" style="width: 50px; height: 4px; background-color: var(--primary-red); margin-bottom: 15px;"></div>
         <p class="card-translation" style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 20px;">${item.translation}</p>
         ${commentHtml}
@@ -2165,6 +2239,21 @@
 
       modalOverlay.classList.add('active');
       lucide.createIcons();
+
+      // Динамічне завантаження зображення Вікіпедії для модального вікна
+      if (item.wikiTitle) {
+        const modalImgEl = document.getElementById(`modal-wiki-img-${item.id}`);
+        if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
+          loadWikiImage(item, (imgUrl) => {
+            if (imgUrl) {
+              modalImgEl.src = imgUrl;
+              modalImgEl.classList.add('loaded');
+            } else {
+              modalImgEl.style.display = 'none';
+            }
+          });
+        }
+      }
     }
 
     function closeModal() {
@@ -2175,3 +2264,4 @@
   </script>
 </body>
 </html>
+--- END OF FILE Paste August 14, 2026 - 3:05PM ---
