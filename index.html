@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Breakfast Club Visualizer</title>
+  <title>Breakfast Club</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/United-kingdom_flag_icon_round.svg/960px-United-kingdom_flag_icon_round.svg.png">
   <!-- Захист від помилок блокування YouTube-плеєра -->
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- Шрифт Montserrat -->
@@ -276,7 +278,6 @@
       display: flex;
       justify-content: center;
       gap: 4px;
-      margin: 0;
       background-color: #E2E8F0;
       padding: 4px;
       border-radius: 30px;
@@ -434,6 +435,9 @@
     /* МЕДІА-КОНТЕНТ В КАРТКАХ */
     .card-media {
       margin-top: 14px;
+    }
+    .card-media-list .card-media {
+      margin-top: 0;
     }
     .youtube-preview {
       position: relative;
@@ -1078,15 +1082,18 @@
       .controls-card {
         flex-direction: column;
         align-items: stretch;
-        gap: 15px;
+        gap: 12px;
+        padding: 14px;
       }
       .filter-group, .sort-group {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 6px;
         width: 100%;
       }
       .type-filter-buttons {
         width: 100%;
+        display: flex;
       }
       .filter-btn {
         flex: 1;
@@ -1101,9 +1108,89 @@
       }
       .view-tabs-container {
         width: 100%;
+        display: flex;
       }
       .view-tab-btn {
         flex: 1;
+        justify-content: center;
+      }
+    }
+    @media (max-width: 576px) {
+      .controls-card {
+        padding: 10px;
+        gap: 10px;
+      }
+      .control-label {
+        font-size: 0.65rem;
+        margin-bottom: 2px;
+      }
+      .type-filter-buttons {
+        display: flex;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        gap: 4px;
+        width: 100%;
+      }
+      .type-filter-buttons::-webkit-scrollbar {
+        display: none;
+      }
+      .filter-btn {
+        flex: 0 0 auto;
+        padding: 6px 12px;
+        font-size: 0.72rem;
+      }
+      .view-tabs-container {
+        display: flex;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        gap: 4px;
+        width: 100%;
+      }
+      .view-tabs-container::-webkit-scrollbar {
+        display: none;
+      }
+      .view-tab-btn {
+        flex: 1 0 auto;
+        padding: 6px 10px;
+        font-size: 0.72rem;
+        gap: 4px;
+      }
+    }
+    @media (max-width: 480px) {
+      header {
+        padding: 15px 10px;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+      .subtitle {
+        font-size: 0.75rem;
+      }
+      .stat-item {
+        padding: 4px 8px;
+        gap: 6px;
+      }
+      .stat-item strong {
+        font-size: 0.95rem;
+      }
+      .stat-item span {
+        font-size: 0.6rem;
+      }
+      .stat-item i {
+        width: 14px;
+        height: 14px;
+      }
+      main {
+        padding: 0 10px 80px;
+      }
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .vocab-card {
+        padding: 16px;
+        min-height: auto;
       }
     }
     @media (max-width: 768px) {
@@ -1832,26 +1919,53 @@
       return allParsedItems.find(i => i.typeClass === 'movie' && i.url && i.url.trim().toLowerCase() === normalizedUrl);
     }
     /**
-     * Групує елементи з ідентичними URL-адресами для запобігання дублюванню карток
+     * Групує елементи з ідентичними URL-адресами та/або однаковими англійськими назвами
+     * для запобігання дублюванню за допомогою алгоритму Union-Find
      */
     function groupItemsForCards(items) {
-      const grouped = [];
+      const n = items.length;
+      if (n === 0) return [];
+      const parent = Array.from({ length: n }, (_, i) => i);
+      function find(i) {
+        if (parent[i] === i) return i;
+        return parent[i] = find(parent[i]);
+      }
+      function union(i, j) {
+        const rootI = find(i);
+        const rootJ = find(j);
+        if (rootI !== rootJ) {
+          parent[rootI] = rootJ;
+        }
+      }
+      const englishMap = new Map();
       const urlMap = new Map();
-      items.forEach(item => {
-        if (item.url && item.url.trim() !== "") {
-          const normalizedUrl = item.url.trim().toLowerCase();
-          if (urlMap.has(normalizedUrl)) {
-            urlMap.get(normalizedUrl).push(item);
+      items.forEach((item, index) => {
+        const engKey = item.english.toLowerCase().trim();
+        if (engKey) {
+          if (englishMap.has(engKey)) {
+            union(index, englishMap.get(engKey));
           } else {
-            const group = [item];
-            urlMap.set(normalizedUrl, group);
-            grouped.push(group);
+            englishMap.set(engKey, index);
           }
-        } else {
-          grouped.push([item]);
+        }
+        if (item.url && item.url.trim() !== "") {
+          const urlKey = item.url.trim().toLowerCase();
+          if (urlMap.has(urlKey)) {
+            union(index, urlMap.get(urlKey));
+          } else {
+            urlMap.set(urlKey, index);
+          }
         }
       });
-      return grouped;
+      const groupMap = new Map();
+      for (let i = 0; i < n; i++) {
+        const root = find(i);
+        if (!groupMap.has(root)) {
+          groupMap.set(root, []);
+        }
+        groupMap.get(root).push(items[i]);
+      }
+      return Array.from(groupMap.values());
     }
     /**
      * Рендеринг повідомлення "Нічого не знайдено"
@@ -2025,18 +2139,51 @@
       `;
     }
     /**
-     * 1. РЕНДЕРИНГ КАРТОК (З об'єднанням за URL)
+     * 1. РЕНДЕРИНГ КАРТОК (З об'єднанням за URL та англійськими термінами)
      */
     function renderCardsView(data) {
       cardsGrid.innerHTML = '';
       const grouped = groupItemsForCards(data);
       grouped.forEach(group => {
         const primaryItem = group[0];
-        const movieItem = findMovieByUrl(primaryItem.url);
-        // Мала плашка в шапці показується ТІЛЬКИ якщо сама картка не є карткою фільму
+        // Збираємо унікальні фільми/контексти для кожного унікального URL у групі
+        const movieItems = [];
+        const seenMovieUrls = new Set();
+        group.forEach(gItem => {
+          if (gItem.url && gItem.url.trim() !== "") {
+            const norm = gItem.url.trim().toLowerCase();
+            if (!seenMovieUrls.has(norm)) {
+              seenMovieUrls.add(norm);
+              const mItem = findMovieByUrl(gItem.url);
+              if (mItem) {
+                movieItems.push(mItem);
+              }
+            }
+          }
+        });
         const isMovieInGroup = group.some(item => item.typeClass === 'movie');
-        const showMovieHeaderBadge = movieItem && !isMovieInGroup;
-        const mediaHtml = buildMediaHtml(primaryItem);
+        const movieBadgesHtml = (!isMovieInGroup && movieItems.length > 0)
+          ? movieItems.map(mItem => `
+              <span class="card-movie-header">
+                <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${mItem.english} ${mItem.movieYear ? `(${mItem.movieYear})` : ''}
+              </span>
+            `).join('')
+          : '';
+        // Збираємо унікальні URL для медіа-блоків
+        const uniqueUrlItems = [];
+        const seenUrls = new Set();
+        group.forEach(gItem => {
+          if (gItem.url && gItem.url.trim() !== "") {
+            const norm = gItem.url.trim().toLowerCase();
+            if (!seenUrls.has(norm)) {
+              seenUrls.add(norm);
+              uniqueUrlItems.push(gItem);
+            }
+          }
+        });
+        const mediaHtml = uniqueUrlItems.length > 0 
+          ? `<div class="card-media-list" style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px; width: 100%;">${uniqueUrlItems.map(uItem => buildMediaHtml(uItem)).join('')}</div>`
+          : '';
         // Створюємо внутрішній контент картки для всіх згрупованих елементів
         const bodyHtml = group.map((item, idx) => {
           const commentHtml = item.comment ? `
@@ -2073,11 +2220,7 @@
                     <i data-lucide="${primaryItem.typeIcon}"></i>
                     ${primaryItem.type}
                   </span>
-                  ${showMovieHeaderBadge ? `
-                    <span class="card-movie-header">
-                      <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${movieItem.english} ${movieItem.movieYear ? `(${movieItem.movieYear})` : ''}
-                    </span>
-                  ` : ''}
+                  ${movieBadgesHtml}
                 </div>
                 <span class="card-meta">№ ${primaryItem.id} • ${primaryItem.date}</span>
               </div>
@@ -2159,17 +2302,47 @@
     function openModal(itemId) {
       const item = allParsedItems.find(i => i.id === itemId);
       if (!item) return;
-      // Збираємо групу споріднених елементів, якщо вони мають однаковий URL
-      let group = [item];
-      if (item.url && item.url.trim() !== "") {
-        const normalizedUrl = item.url.trim().toLowerCase();
-        group = allParsedItems.filter(i => i.url && i.url.trim().toLowerCase() === normalizedUrl);
-      }
+      const groups = groupItemsForCards(allParsedItems);
+      const group = groups.find(g => g.some(i => i.id === itemId)) || [item];
       const primaryItem = group[0];
-      const movieItem = findMovieByUrl(primaryItem.url);
+      // Збираємо унікальні фільми/контексти для кожного унікального URL у групі
+      const movieItems = [];
+      const seenMovieUrls = new Set();
+      group.forEach(gItem => {
+        if (gItem.url && gItem.url.trim() !== "") {
+          const norm = gItem.url.trim().toLowerCase();
+          if (!seenMovieUrls.has(norm)) {
+            seenMovieUrls.add(norm);
+            const mItem = findMovieByUrl(gItem.url);
+            if (mItem) {
+              movieItems.push(mItem);
+            }
+          }
+        }
+      });
       const isMovieInGroup = group.some(i => i.typeClass === 'movie');
-      const showMovieHeaderBadge = movieItem && !isMovieInGroup;
-      const mediaHtml = buildMediaHtml(primaryItem, true);
+      const movieBadgesHtml = (!isMovieInGroup && movieItems.length > 0)
+        ? movieItems.map(mItem => `
+            <span class="card-movie-header">
+              <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${mItem.english} ${mItem.movieYear ? `(${mItem.movieYear})` : ''}
+            </span>
+          `).join('')
+        : '';
+      // Збираємо унікальні URL для медіа-блоків
+      const uniqueUrlItems = [];
+      const seenUrls = new Set();
+      group.forEach(gItem => {
+        if (gItem.url && gItem.url.trim() !== "") {
+          const norm = gItem.url.trim().toLowerCase();
+          if (!seenUrls.has(norm)) {
+            seenUrls.add(norm);
+            uniqueUrlItems.push(gItem);
+          }
+        }
+      });
+      const mediaHtml = uniqueUrlItems.length > 0 
+        ? `<div class="card-media-list" style="display: flex; flex-direction: column; gap: 12px; margin-top: 18px; width: 100%;">${uniqueUrlItems.map(uItem => buildMediaHtml(uItem, true)).join('')}</div>`
+        : '';
       const bodyHtml = group.map((gItem, idx) => {
         const commentHtml = gItem.comment ? `
           <div class="card-comment" style="margin-top: 6px;">
@@ -2201,39 +2374,35 @@
               <i data-lucide="${primaryItem.typeIcon}"></i>
               ${primaryItem.type}
             </span>
-            ${showMovieHeaderBadge ? `
-              <span class="card-movie-header">
-                <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${movieItem.english} ${movieItem.movieYear ? `(${movieItem.movieYear})` : ''}
-              </span>
-            ` : ''}
+            ${movieBadgesHtml}
           </div>
           <span class="card-meta">№ ${primaryItem.id} • ${primaryItem.date}</span>
         </div>
         <div class="modal-body-content" style="margin-bottom: 20px;">
           ${bodyHtml}
         </div>
-        <div style="margin-top: 25px;">
-          ${mediaHtml}
-        </div>
+        ${mediaHtml}
       `;
       modalOverlay.classList.add('active');
       lucide.createIcons();
-      if (primaryItem.wikiTitle) {
-        const modalImgEl = document.getElementById(`modal-wiki-img-${primaryItem.id}`);
-        if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
-          loadWikiImage(primaryItem, (imgUrl) => {
-            if (imgUrl) {
-              modalImgEl.src = imgUrl;
-              modalImgEl.style.display = 'block';
-              modalImgEl.onload = () => {
-                modalImgEl.classList.add('loaded');
-              };
-            } else {
-              modalImgEl.style.display = 'none';
-            }
-          });
+      uniqueUrlItems.forEach(uItem => {
+        if (uItem.wikiTitle) {
+          const modalImgEl = document.getElementById(`modal-wiki-img-${uItem.id}`);
+          if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
+            loadWikiImage(uItem, (imgUrl) => {
+              if (imgUrl) {
+                modalImgEl.src = imgUrl;
+                modalImgEl.style.display = 'block';
+                modalImgEl.onload = () => {
+                  modalImgEl.classList.add('loaded');
+                };
+              } else {
+                modalImgEl.style.display = 'none';
+              }
+            });
+          }
         }
-      }
+      });
     }
     function closeModal() {
       modalOverlay.classList.remove('active');
