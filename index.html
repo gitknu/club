@@ -49,9 +49,9 @@
       z-index: 10000;
       transition: width 0.1s ease;
     }
-    /* Шапка */
+    /* Шапка (Зменшено за висотою вдвічі) */
     header {
-      padding: 60px 20px 40px;
+      padding: 25px 20px 20px;
       text-align: center;
       position: relative;
       background: radial-gradient(circle at top, rgba(184, 0, 0, 0.08) 0%, transparent 60%), #0B192C;
@@ -64,11 +64,11 @@
       gap: 6px;
       background-color: rgba(255, 255, 255, 0.1);
       color: #FFFFFF;
-      padding: 6px 14px;
+      padding: 4px 10px;
       border-radius: 50px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -86,56 +86,56 @@
       100% { transform: scale(0.9); opacity: 0.6; }
     }
     h1 {
-      font-size: 3rem;
+      font-size: 1.8rem;
       font-weight: 800;
-      letter-spacing: -1.5px;
-      margin-bottom: 12px;
+      letter-spacing: -1px;
+      margin-bottom: 6px;
       color: #FFFFFF;
     }
     .subtitle {
-      font-size: 1.15rem;
+      font-size: 0.95rem;
       color: #94A3B8;
       max-width: 600px;
-      margin: 0 auto 35px;
+      margin: 0 auto 15px;
       font-weight: 400;
     }
     /* Метрики */
     .stats-bar {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      margin: 25px auto 0;
-      max-width: 800px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin: 15px auto 0;
+      max-width: 750px;
     }
     .stat-item {
       background: var(--bg-card);
-      padding: 15px;
+      padding: 10px 12px;
       border-radius: 12px;
       border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
       color: var(--text-main);
     }
     .stat-item i {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
     .stat-item-total i { color: var(--text-main); }
     .stat-item-words i { color: var(--accent-blue); }
     .stat-item-expressions i { color: var(--primary-red); }
     .stat-item-movies i { color: var(--accent-purple); }
     .stat-item span {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .stat-item strong {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: var(--text-main);
     }
@@ -143,17 +143,17 @@
     .search-container {
       position: relative;
       max-width: 550px;
-      margin: 30px auto 0;
+      margin: 15px auto 0;
     }
     .search-input {
       width: 100%;
-      padding: 16px 20px 16px 52px;
+      padding: 12px 20px 12px 48px;
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 50px;
       color: var(--text-main);
       font-family: var(--font-family);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       transition: all 0.3s ease;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
     }
@@ -337,6 +337,18 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 14px;
+    }
+    .card-movie-header {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-purple);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(49, 46, 129, 0.06);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-top: 4px;
     }
     .badge {
       display: inline-flex;
@@ -988,9 +1000,9 @@
     }
     /* АДАПТИВНІСТЬ */
     @media (max-width: 768px) {
-      h1 { font-size: 1.8rem; }
-      .subtitle { font-size: 0.95rem; margin-bottom: 20px; }
-      header { padding: 35px 15px 20px; }
+      h1 { font-size: 1.5rem; }
+      .subtitle { font-size: 0.85rem; margin-bottom: 12px; }
+      header { padding: 20px 15px 15px; }
       .controls-card {
         flex-direction: column;
         align-items: stretch;
@@ -1687,6 +1699,51 @@
       return data;
     }
     /**
+     * Пошук фільму в колекції за URL для заголовка картки
+     */
+    function findMovieByUrl(url) {
+      if (!url || url.trim() === "") return null;
+      const normalizedUrl = url.trim().toLowerCase();
+      return allParsedItems.find(i => i.typeClass === 'movie' && i.url && i.url.trim().toLowerCase() === normalizedUrl);
+    }
+    /**
+     * Групує елементи з ідентичними URL-адресами для запобігання дублюванню карток
+     */
+    function groupItemsForCards(items) {
+      const grouped = [];
+      const urlMap = new Map();
+      items.forEach(item => {
+        if (item.url && item.url.trim() !== "") {
+          const normalizedUrl = item.url.trim().toLowerCase();
+          if (urlMap.has(normalizedUrl)) {
+            urlMap.get(normalizedUrl).push(item);
+          } else {
+            const group = [item];
+            urlMap.set(normalizedUrl, group);
+            grouped.push(group);
+          }
+        } else {
+          grouped.push([item]);
+        }
+      });
+      return grouped;
+    }
+    /**
+     * Рендеринг повідомлення "Нічого не знайдено"
+     */
+    function renderNoResults() {
+      cardsGrid.innerHTML = `
+        <div class="no-results">
+          <i data-lucide="search-slash" class="no-results-icon"></i>
+          <h3>Нічого не знайдено</h3>
+          <p>Спробуйте змінити ключові слова або налаштування фільтрації.</p>
+        </div>
+      `;
+      tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">Нічого не знайдено</td></tr>';
+      tagCloud.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 30px; width: 100%;">Нічого не знайдено</div>';
+      lucide.createIcons();
+    }
+    /**
      * Основна функція оновлення інтерфейсу
      */
     function updateAppUI() {
@@ -1843,33 +1900,58 @@
       `;
     }
     /**
-     * 1. РЕНДЕРИНГ КАРТОК
+     * 1. РЕНДЕРИНГ КАРТОК (З об'єднанням за URL)
      */
     function renderCardsView(data) {
       cardsGrid.innerHTML = '';
-      data.forEach(item => {
-        const commentHtml = item.comment ? `
-          <div class="card-comment">
-            <i data-lucide="quote"></i>
-            <span>${item.comment}</span>
-          </div>
-        ` : '';
-        const mediaHtml = buildMediaHtml(item);
+      const grouped = groupItemsForCards(data);
+      grouped.forEach(group => {
+        const movieItem = findMovieByUrl(group[0].url);
+        const primaryItem = movieItem || group[0];
+        const mediaHtml = buildMediaHtml(primaryItem);
+        // Створюємо внутрішній контент картки для всіх згрупованих елементів
+        const bodyHtml = group.map((item, idx) => {
+          const commentHtml = item.comment ? `
+            <div class="card-comment" style="margin-top: 6px;">
+              <i data-lucide="quote" style="width: 12px; height: 12px; color: var(--primary-red); margin-top: 2px;"></i>
+              <span style="font-size: 0.75rem;">${item.comment}</span>
+            </div>
+          ` : '';
+          return `
+            <div class="card-sub-item" style="${idx > 0 ? 'border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px;' : ''}">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                <h4 class="card-english" style="font-size: 1.15rem; margin-bottom: 0;">${getEnglishDisplay(item)}</h4>
+                ${group.length > 1 ? `
+                  <span class="badge badge-${item.typeClass}" style="font-size: 0.6rem; padding: 2px 6px;">
+                    ${item.type}
+                  </span>
+                ` : ''}
+              </div>
+              <div class="card-divider" style="margin: 4px 0 8px;"></div>
+              <p class="card-translation" style="font-size: 0.9rem; margin-bottom: 4px;">${item.translation}</p>
+              ${commentHtml}
+            </div>
+          `;
+        }).join('');
         const cardHtml = `
-          <div class="vocab-card card-${item.typeClass}">
+          <div class="vocab-card card-${primaryItem.typeClass}">
             <div>
               <div class="card-header">
-                <span class="badge badge-${item.typeClass}">
-                  <i data-lucide="${item.typeIcon}"></i>
-                  ${item.type}
-                </span>
-                <span class="card-meta">№ ${item.id} • ${item.date}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                  <span class="badge badge-${primaryItem.typeClass}">
+                    <i data-lucide="${primaryItem.typeIcon}"></i>
+                    ${primaryItem.type}
+                  </span>
+                  ${movieItem ? `
+                    <span class="card-movie-header">
+                      <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${getEnglishDisplay(movieItem)}
+                    </span>
+                  ` : ''}
+                </div>
+                <span class="card-meta">№ ${primaryItem.id} • ${primaryItem.date}</span>
               </div>
               <div class="card-body">
-                <h3 class="card-english">${getEnglishDisplay(item)}</h3>
-                <div class="card-divider"></div>
-                <p class="card-translation">${item.translation}</p>
-                ${commentHtml}
+                ${bodyHtml}
               </div>
             </div>
             ${mediaHtml}
@@ -1879,7 +1961,7 @@
       });
     }
     /**
-     * 2. РЕНДЕРИНГ ТАБЛИЦІ
+     * 2. РЕНДЕРИНГ ТАБЛИЦІ (Тут елементи залишаються окремими)
      */
     function renderTableView(data) {
       tableBody.innerHTML = '';
@@ -1916,7 +1998,7 @@
       });
     }
     /**
-     * 3. РЕНДЕРИНГ ХМАРИ СЛІВ
+     * 3. РЕНДЕРИНГ ХМАРИ СЛІВ (Окремі теги)
      */
     function renderCloudView(data) {
       tagCloud.innerHTML = '';
@@ -1941,40 +2023,69 @@
       });
     }
     /**
-     * ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА
+     * ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА (З повним об'єднанням споріднених елементів)
      */
     function openModal(itemId) {
       const item = allParsedItems.find(i => i.id === itemId);
       if (!item) return;
-      const mediaHtml = buildMediaHtml(item, true);
-      const commentHtml = item.comment ? `
-        <div class="card-comment" style="margin-top: 15px;">
-          <i data-lucide="quote"></i>
-          <span>${item.comment}</span>
-        </div>
-      ` : '';
+      // Збираємо групу споріднених елементів, якщо вони мають однаковий URL
+      let group = [item];
+      if (item.url && item.url.trim() !== "") {
+        const normalizedUrl = item.url.trim().toLowerCase();
+        group = allParsedItems.filter(i => i.url && i.url.trim().toLowerCase() === normalizedUrl);
+      }
+      const movieItem = findMovieByUrl(group[0].url);
+      const primaryItem = movieItem || group[0];
+      const mediaHtml = buildMediaHtml(primaryItem, true);
+      const bodyHtml = group.map((gItem, idx) => {
+        const commentHtml = gItem.comment ? `
+          <div class="card-comment" style="margin-top: 6px;">
+            <i data-lucide="quote" style="width: 12px; height: 12px; color: var(--primary-red); margin-top: 2px;"></i>
+            <span>${gItem.comment}</span>
+          </div>
+        ` : '';
+        return `
+          <div class="modal-sub-item" style="${idx > 0 ? 'border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;' : ''}">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <h3 class="card-english" style="font-size: 1.4rem; margin-bottom: 0;">${getEnglishDisplay(gItem)}</h3>
+              <span class="badge badge-${gItem.typeClass}">
+                <i data-lucide="${gItem.typeIcon}"></i>
+                ${gItem.type}
+              </span>
+            </div>
+            <p class="card-translation" style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 4px;">${gItem.translation}</p>
+            ${commentHtml}
+          </div>
+        `;
+      }).join('');
       modalTarget.innerHTML = `
         <div class="card-header" style="margin-bottom: 20px;">
-          <span class="badge badge-${item.typeClass}">
-            <i data-lucide="${item.typeIcon}"></i>
-            ${item.type}
-          </span>
-          <span class="card-meta">№ ${item.id} • ${item.date}</span>
+          <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+            <span class="badge badge-${primaryItem.typeClass}">
+              <i data-lucide="${primaryItem.typeIcon}"></i>
+              ${primaryItem.type}
+            </span>
+            ${movieItem ? `
+              <span class="card-movie-header">
+                <i data-lucide="film" style="width: 12px; height: 12px;"></i> ${getEnglishDisplay(movieItem)}
+              </span>
+            ` : ''}
+          </div>
+          <span class="card-meta">№ ${primaryItem.id} • ${primaryItem.date}</span>
         </div>
-        <h2 class="card-english" style="font-size: 1.8rem; line-height: 1.3; margin-bottom: 10px;">${getEnglishDisplay(item)}</h2>
-        <div class="card-divider" style="width: 50px; height: 4px; background-color: var(--primary-red); margin-bottom: 15px;"></div>
-        <p class="card-translation" style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 20px;">${item.translation}</p>
-        ${commentHtml}
+        <div class="modal-body-content" style="margin-bottom: 20px;">
+          ${bodyHtml}
+        </div>
         <div style="margin-top: 25px;">
           ${mediaHtml}
         </div>
       `;
       modalOverlay.classList.add('active');
       lucide.createIcons();
-      if (item.wikiTitle) {
-        const modalImgEl = document.getElementById(`modal-wiki-img-${item.id}`);
+      if (primaryItem.wikiTitle) {
+        const modalImgEl = document.getElementById(`modal-wiki-img-${primaryItem.id}`);
         if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
-          loadWikiImage(item, (imgUrl) => {
+          loadWikiImage(primaryItem, (imgUrl) => {
             if (imgUrl) {
               modalImgEl.src = imgUrl;
               modalImgEl.style.display = 'block';
