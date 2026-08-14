@@ -4,18 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Breakfast Club Visualizer</title>
-  
   <!-- Захист від помилок блокування YouTube-плеєра -->
   <meta name="referrer" content="strict-origin-when-cross-origin">
-
   <!-- Шрифт Montserrat -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
   <!-- Іконки Lucide -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
     :root {
       --primary-red: #b80000;         /* Корпоративний червоний */
@@ -30,13 +26,11 @@
       --accent-green: #15803D;        /* Спокійний зелений */
       --font-family: 'Montserrat', sans-serif;
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
       background-color: var(--bg-light);
       color: var(--text-main);
@@ -44,7 +38,6 @@
       overflow-x: hidden;
       line-height: 1.6;
     }
-
     /* Індикатор прокрутки */
     #progress-bar {
       position: fixed;
@@ -56,33 +49,30 @@
       z-index: 10000;
       transition: width 0.1s ease;
     }
-
-    /* Шапка (Компактна версія) */
+    /* Шапка */
     header {
-      padding: 24px 20px 20px;
+      padding: 60px 20px 40px;
       text-align: center;
       position: relative;
       background: radial-gradient(circle at top, rgba(184, 0, 0, 0.08) 0%, transparent 60%), #0B192C;
-      border-bottom: 3px solid var(--primary-red);
-      box-shadow: 0 6px 20px rgba(11, 25, 44, 0.08);
+      border-bottom: 4px solid var(--primary-red);
+      box-shadow: 0 10px 30px rgba(11, 25, 44, 0.1);
     }
-
     .live-indicator {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       background-color: rgba(255, 255, 255, 0.1);
       color: #FFFFFF;
-      padding: 4px 12px;
+      padding: 6px 14px;
       border-radius: 50px;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
-
     .live-dot {
       width: 8px;
       height: 8px;
@@ -90,85 +80,74 @@
       border-radius: 50%;
       animation: pulse 1.5s infinite;
     }
-
     @keyframes pulse {
-      0% { transform: scale(0.9); opacity: 0.6; }
+      0 { transform: scale(0.9); opacity: 0.6; }
       50% { transform: scale(1.2); opacity: 1; }
       100% { transform: scale(0.9); opacity: 0.6; }
     }
-
     h1 {
-      font-size: 1.8rem;
+      font-size: 3rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
+      letter-spacing: -1.5px;
+      margin-bottom: 12px;
       color: #FFFFFF;
     }
-
     .subtitle {
-      font-size: 0.95rem;
+      font-size: 1.15rem;
       color: #94A3B8;
       max-width: 600px;
-      margin: 0 auto 15px;
+      margin: 0 auto 35px;
       font-weight: 400;
     }
-
     /* Метрики */
     .stats-bar {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin: 15px auto 0;
+      gap: 15px;
+      margin: 25px auto 0;
       max-width: 800px;
     }
-
     .stat-item {
       background: var(--bg-card);
-      padding: 10px;
-      border-radius: 10px;
+      padding: 15px;
+      border-radius: 12px;
       border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
       color: var(--text-main);
     }
-
     .stat-item i {
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
     }
-
     .stat-item-total i { color: var(--text-main); }
     .stat-item-words i { color: var(--accent-blue); }
     .stat-item-expressions i { color: var(--primary-red); }
     .stat-item-movies i { color: var(--accent-purple); }
-
     .stat-item span {
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
     .stat-item strong {
-      font-size: 1.1rem;
+      font-size: 1.5rem;
       font-weight: 800;
       color: var(--text-main);
     }
-
     /* Контейнер головного пошуку */
     .search-container {
       position: relative;
       max-width: 550px;
-      margin: 15px auto 0;
+      margin: 30px auto 0;
     }
-
     .search-input {
       width: 100%;
-      padding: 12px 20px 12px 48px;
+      padding: 16px 20px 16px 52px;
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 50px;
@@ -178,13 +157,11 @@
       transition: all 0.3s ease;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
     }
-
     .search-input:focus {
       outline: none;
       border-color: var(--primary-red);
       box-shadow: 0 0 0 4px rgba(184, 0, 0, 0.08), 0 8px 25px rgba(0, 0, 0, 0.05);
     }
-
     .search-icon {
       position: absolute;
       left: 20px;
@@ -195,7 +172,6 @@
       width: 18px;
       height: 18px;
     }
-
     /* Панель Керування (Фільтри та Сортування) */
     .controls-card {
       background-color: var(--bg-card);
@@ -210,14 +186,12 @@
       flex-wrap: wrap;
       gap: 15px;
     }
-
     .filter-group, .sort-group {
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
-
     .control-label {
       font-size: 0.75rem;
       font-weight: 700;
@@ -225,12 +199,10 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
     .type-filter-buttons {
       display: flex;
       gap: 6px;
     }
-
     .filter-btn {
       padding: 8px 18px;
       border-radius: 30px;
@@ -243,25 +215,21 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
     .filter-btn:hover {
       border-color: var(--text-main);
       color: var(--text-main);
     }
-
     .filter-btn.active {
       background-color: var(--primary-red);
       border-color: var(--primary-red);
       color: #FFFFFF;
       box-shadow: 0 4px 12px rgba(184, 0, 0, 0.2);
     }
-
     .sort-select-wrapper {
       position: relative;
       display: flex;
       align-items: center;
     }
-
     .sort-select {
       appearance: none;
       background-color: var(--bg-card);
@@ -276,11 +244,9 @@
       outline: none;
       transition: all 0.2s ease;
     }
-
     .sort-select:focus {
       border-color: var(--primary-red);
     }
-
     .sort-icon {
       position: absolute;
       right: 12px;
@@ -289,7 +255,6 @@
       height: 14px;
       pointer-events: none;
     }
-
     /* Перемикач вкладок */
     .view-tabs-container {
       display: flex;
@@ -302,7 +267,6 @@
       border-radius: 50px;
       border: 1px solid var(--border-color);
     }
-
     .view-tab-btn {
       flex: 1;
       display: flex;
@@ -320,39 +284,32 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
     .view-tab-btn:hover {
       color: var(--text-main);
     }
-
     .view-tab-btn.active {
       background-color: var(--text-main);
       color: #FFFFFF;
       box-shadow: 0 4px 15px rgba(11, 25, 44, 0.15);
     }
-
     /* Спільний робочий контейнер */
     main {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px 100px;
     }
-
     .view-section {
       display: none;
     }
-
     .view-section.active {
       display: block;
     }
-
     /* ДИЗАЙН КАРТОК (Cards View) */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 20px;
     }
-
     .vocab-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -365,26 +322,22 @@
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
       box-shadow: 0 4px 20px rgba(11, 25, 44, 0.02);
     }
-
     .vocab-card:hover {
       transform: translateY(-6px);
       box-shadow: 0 16px 36px rgba(11, 25, 44, 0.08);
       border-color: rgba(30, 62, 98, 0.2);
     }
-
     /* Кольорове маркування зліва відповідно до типу */
     .card-word { border-left: 5px solid var(--accent-blue); }
     .card-expression { border-left: 5px solid var(--primary-red); }
     .card-movie { border-left: 5px solid var(--accent-purple); }
     .card-other { border-left: 5px solid var(--text-muted); }
-
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 14px;
     }
-
     .badge {
       display: inline-flex;
       align-items: center;
@@ -396,25 +349,21 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
     .badge-word { background-color: rgba(30, 62, 98, 0.08); color: var(--accent-blue); }
     .badge-expression { background-color: rgba(184, 0, 0, 0.08); color: var(--primary-red); }
     .badge-movie { background-color: rgba(49, 46, 129, 0.08); color: var(--accent-purple); }
     .badge-other { background-color: rgba(100, 116, 139, 0.08); color: var(--text-muted); }
-
     .card-meta {
       font-size: 0.75rem;
       color: var(--text-muted);
       font-weight: 500;
     }
-
     .card-body {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       margin-bottom: 16px;
     }
-
     .card-english {
       font-size: 1.3rem;
       font-weight: 800;
@@ -422,7 +371,6 @@
       margin-bottom: 6px;
       word-break: break-word;
     }
-
     .card-divider {
       width: 30px;
       height: 3px;
@@ -430,14 +378,12 @@
       border-radius: 2px;
       margin: 6px 0 10px;
     }
-
     .card-translation {
       font-size: 1rem;
       font-weight: 600;
       color: var(--text-muted);
       margin-bottom: 12px;
     }
-
     .card-comment {
       background-color: var(--bg-light);
       border-radius: 10px;
@@ -449,7 +395,6 @@
       align-items: flex-start;
       margin-top: auto;
     }
-
     .card-comment i {
       width: 14px;
       height: 14px;
@@ -457,12 +402,10 @@
       flex-shrink: 0;
       margin-top: 2px;
     }
-
     /* МЕДІА-КОНТЕНТ В КАРТКАХ */
     .card-media {
       margin-top: 14px;
     }
-
     .youtube-preview {
       position: relative;
       width: 100%;
@@ -473,18 +416,15 @@
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-
     .youtube-preview img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.3s ease;
     }
-
     .youtube-preview:hover img {
       transform: scale(1.04);
     }
-
     .youtube-overlay {
       position: absolute;
       top: 0;
@@ -497,11 +437,9 @@
       justify-content: center;
       transition: background-color 0.3s ease;
     }
-
     .youtube-preview:hover .youtube-overlay {
       background-color: rgba(0, 0, 0, 0.45);
     }
-
     .youtube-play-btn {
       width: 44px;
       height: 44px;
@@ -514,16 +452,13 @@
       box-shadow: 0 4px 15px rgba(184, 0, 0, 0.4);
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     .youtube-preview:hover .youtube-play-btn {
       transform: scale(1.12);
     }
-
     .youtube-play-btn i {
       width: 18px;
       height: 18px;
     }
-
     /* ДИЗАЙН ВІКІПЕДІЇ */
     .wikipedia-preview {
       position: relative;
@@ -538,7 +473,6 @@
       border: 1px solid var(--border-color);
       text-decoration: none;
     }
-
     .wikipedia-preview img {
       width: 100%;
       height: 100%;
@@ -546,15 +480,12 @@
       opacity: 0;
       transition: opacity 0.4s ease, transform 0.4s ease;
     }
-
     .wikipedia-preview img.loaded {
       opacity: 1;
     }
-
     .wikipedia-preview:hover img.loaded {
       transform: scale(1.04);
     }
-
     .wiki-overlay {
       position: absolute;
       top: 0;
@@ -567,11 +498,9 @@
       justify-content: center;
       transition: background-color 0.3s ease;
     }
-
     .wikipedia-preview:hover .wiki-overlay {
       background-color: rgba(15, 23, 42, 0.3);
     }
-
     .wiki-logo-btn {
       width: 44px;
       height: 44px;
@@ -584,16 +513,13 @@
       box-shadow: 0 4px 15px rgba(184, 0, 0, 0.4);
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     .wikipedia-preview:hover .wiki-logo-btn {
       transform: scale(1.12);
     }
-
     .wiki-logo-btn i {
       width: 18px;
       height: 18px;
     }
-
     .media-caption {
       position: absolute;
       bottom: 0;
@@ -608,7 +534,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .iframe-wrapper {
       position: relative;
       width: 100%;
@@ -617,7 +542,6 @@
       overflow: hidden;
       background-color: #000;
     }
-
     .iframe-wrapper iframe {
       position: absolute;
       top: 0;
@@ -625,7 +549,6 @@
       width: 100%;
       height: 100%;
     }
-
     /* Загальне веб-посилання */
     .generic-link-preview {
       display: flex;
@@ -639,12 +562,10 @@
       color: inherit;
       transition: all 0.2s ease;
     }
-
     .generic-link-preview:hover {
       border-color: var(--accent-blue);
       background-color: rgba(30, 62, 98, 0.02);
     }
-
     .link-icon-container {
       width: 32px;
       height: 32px;
@@ -656,16 +577,13 @@
       justify-content: center;
       flex-shrink: 0;
     }
-
     .link-icon-container i {
       width: 14px;
       height: 14px;
     }
-
     .link-details {
       min-width: 0;
     }
-
     .link-title {
       display: block;
       font-size: 0.8rem;
@@ -675,13 +593,11 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .link-domain {
       font-size: 0.7rem;
       color: var(--text-muted);
       font-weight: 500;
     }
-
     /* ДИЗАЙН ТАБЛИЦІ (Table View) */
     .table-wrapper {
       overflow-x: auto;
@@ -690,14 +606,12 @@
       background-color: var(--bg-card);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
     }
-
     .vocab-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
       font-size: 0.85rem;
     }
-
     .vocab-table th {
       background-color: #F8FAFC;
       padding: 14px 18px;
@@ -709,11 +623,9 @@
       transition: background-color 0.2s ease;
       white-space: nowrap;
     }
-
     .vocab-table th:hover {
       background-color: #F1F5F9;
     }
-
     .vocab-table th i {
       display: inline-block;
       vertical-align: middle;
@@ -722,32 +634,26 @@
       height: 12px;
       color: var(--text-muted);
     }
-
     .vocab-table td {
       padding: 14px 18px;
       border-bottom: 1px solid var(--border-color);
       color: var(--text-main);
       vertical-align: middle;
     }
-
     .vocab-table tr:last-child td {
       border-bottom: none;
     }
-
     .vocab-table tr:hover {
       background-color: rgba(241, 245, 249, 0.4);
     }
-
     .table-english {
       font-weight: 700;
       color: var(--text-main);
     }
-
     .table-translation {
       font-weight: 500;
       color: var(--text-muted);
     }
-
     .table-comment {
       color: var(--text-muted);
       max-width: 250px;
@@ -755,7 +661,6 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
     .table-media-link {
       display: inline-flex;
       align-items: center;
@@ -768,27 +673,22 @@
       transition: all 0.2s ease;
       white-space: nowrap;
     }
-
     .table-media-link.yt-link {
       background-color: rgba(184, 0, 0, 0.08);
       color: var(--primary-red);
     }
-
     .table-media-link.yt-link:hover {
       background-color: var(--primary-red);
       color: white;
     }
-
     .table-media-link.wiki-link {
       background-color: rgba(30, 62, 98, 0.08);
       color: var(--accent-blue);
     }
-
     .table-media-link.wiki-link:hover {
       background-color: var(--accent-blue);
       color: white;
     }
-
     /* ДИЗАЙН ХМАРИ СЛІВ (Tag Cloud View) */
     .tag-cloud-container {
       display: flex;
@@ -801,7 +701,6 @@
       border: 1.5px dashed var(--border-color);
       min-height: 380px;
     }
-
     .cloud-tag {
       display: flex;
       align-items: center;
@@ -813,12 +712,10 @@
       border: 1px solid transparent;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
     }
-
     .cloud-tag:hover {
       transform: scale(1.08) translateY(-2px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
     }
-
     /* Категорії хмари */
     .cloud-tag.tag-word {
       background-color: #FFFFFF;
@@ -829,7 +726,6 @@
       background-color: var(--accent-blue);
       color: white;
     }
-
     .cloud-tag.tag-expression {
       background-color: #FFFFFF;
       border-color: rgba(184, 0, 0, 0.2);
@@ -839,7 +735,6 @@
       background-color: var(--primary-red);
       color: white;
     }
-
     .cloud-tag.tag-movie {
       background-color: #FFFFFF;
       border-color: rgba(49, 46, 129, 0.2);
@@ -849,7 +744,6 @@
       background-color: var(--accent-purple);
       color: white;
     }
-
     .cloud-tag.tag-other {
       background-color: #FFFFFF;
       border-color: rgba(100, 116, 139, 0.2);
@@ -859,18 +753,15 @@
       background-color: var(--text-muted);
       color: white;
     }
-
     /* Класи розмірів */
     .f-size-sm { font-size: 0.8rem; font-weight: 500; }
     .f-size-md { font-size: 1rem; font-weight: 600; }
     .f-size-lg { font-size: 1.15rem; font-weight: 700; }
     .f-size-xl { font-size: 1.3rem; font-weight: 800; }
-
     .cloud-tag-icon {
       font-size: 0.65rem;
       opacity: 0.7;
     }
-
     /* ІНТЕРАКТИВНЕ МОДАЛЬНЕ ВІКНО */
     .modal-overlay {
       position: fixed;
@@ -889,12 +780,10 @@
       transition: opacity 0.3s ease;
       padding: 20px;
     }
-
     .modal-overlay.active {
       opacity: 1;
       pointer-events: auto;
     }
-
     .modal-card {
       background: var(--bg-card);
       border-radius: 20px;
@@ -907,11 +796,9 @@
       border: 1px solid var(--border-color);
       position: relative;
     }
-
     .modal-overlay.active .modal-card {
       transform: scale(1);
     }
-
     .modal-close-btn {
       position: absolute;
       top: 14px;
@@ -929,16 +816,13 @@
       transition: all 0.2s ease;
       z-index: 10;
     }
-
     .modal-close-btn:hover {
       background: var(--primary-red);
       color: white;
     }
-
     .modal-content {
       padding: 26px;
     }
-
     /* ПЛАВАЮЧА ПАНЕЛЬ КЕРУВАННЯ */
     .floating-controls-panel {
       position: fixed;
@@ -957,18 +841,15 @@
       opacity: 0;
       visibility: hidden;
     }
-
     .floating-controls-panel.visible {
       opacity: 1;
       visibility: visible;
     }
-
     .floating-search-box {
       position: relative;
       display: flex;
       align-items: center;
     }
-
     .floating-search-icon {
       position: absolute;
       left: 14px;
@@ -977,7 +858,6 @@
       height: 14px;
       pointer-events: none;
     }
-
     .floating-search-input {
       border: 1px solid var(--border-color);
       background: var(--bg-light);
@@ -989,13 +869,11 @@
       width: 200px;
       transition: all 0.3s ease;
     }
-
     .floating-search-input:focus {
       outline: none;
       border-color: var(--primary-red);
       width: 240px;
     }
-
     .back-to-top {
       background-color: var(--primary-red);
       color: white;
@@ -1011,17 +889,14 @@
       box-shadow: 0 4px 10px rgba(184, 0, 0, 0.15);
       flex-shrink: 0;
     }
-
     .back-to-top:hover {
       background-color: var(--primary-red-hover);
       transform: translateY(-2px);
     }
-
     .back-to-top i {
       width: 14px;
       height: 14px;
     }
-
     /* Стани очікування та помилок */
     .loading-state, .error-state {
       display: flex;
@@ -1031,7 +906,6 @@
       padding: 60px 20px;
       text-align: center;
     }
-
     .spinner {
       width: 40px;
       height: 40px;
@@ -1041,36 +915,30 @@
       animation: spin 0.8s infinite linear;
       margin-bottom: 12px;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
     .loading-state p {
       color: var(--text-muted);
       font-weight: 500;
     }
-
     .error-icon {
       width: 48px;
       height: 48px;
       color: var(--primary-red);
       margin-bottom: 12px;
     }
-
     .error-state h3 {
       font-size: 1.25rem;
       margin-bottom: 6px;
     }
-
     .error-state p {
       color: var(--text-muted);
       margin-bottom: 16px;
       max-width: 400px;
       font-size: 0.85rem;
     }
-
     .retry-btn {
       background-color: var(--primary-red);
       color: white;
@@ -1083,11 +951,9 @@
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
-
     .retry-btn:hover {
       background-color: var(--primary-red-hover);
     }
-
     /* Відсутні результати */
     .no-results {
       display: flex;
@@ -1098,24 +964,20 @@
       text-align: center;
       color: var(--text-muted);
     }
-
     .no-results-icon {
       width: 40px;
       height: 40px;
       margin-bottom: 10px;
       opacity: 0.5;
     }
-
     .no-results h3 {
       font-size: 1.15rem;
       margin-bottom: 4px;
       color: var(--text-main);
     }
-
     .no-results p {
       font-size: 0.85rem;
     }
-
     footer {
       text-align: center;
       padding: 30px 20px;
@@ -1124,41 +986,33 @@
       border-top: 1px solid var(--border-color);
       margin-top: 50px;
     }
-
     /* АДАПТИВНІСТЬ */
     @media (max-width: 768px) {
       h1 { font-size: 1.8rem; }
       .subtitle { font-size: 0.95rem; margin-bottom: 20px; }
       header { padding: 35px 15px 20px; }
-      
       .controls-card {
         flex-direction: column;
         align-items: stretch;
       }
-
       .filter-group, .sort-group {
         flex-direction: column;
         align-items: flex-start;
       }
-
       .type-filter-buttons {
         width: 100%;
       }
-
       .filter-btn {
         flex: 1;
         text-align: center;
         padding: 8px 0;
       }
-
       .sort-select-wrapper {
         width: 100%;
       }
-
       .sort-select {
         width: 100%;
       }
-
       .floating-controls-panel {
         bottom: 15px;
         left: 15px;
@@ -1168,15 +1022,12 @@
         border-radius: 30px;
         padding: 5px 10px;
       }
-
       .floating-search-box {
         flex: 1;
       }
-
       .floating-search-input {
         width: 100%;
       }
-
       .floating-search-input:focus {
         width: 100%;
       }
@@ -1184,11 +1035,9 @@
   </style>
 </head>
 <body>
-
   <!-- Прогрес скролу -->
   <div id="progress-bar"></div>
-
-  <!-- Шапка (Компактна версія) -->
+  <!-- Шапка -->
   <header>
     <div class="live-indicator">
       <div class="live-dot"></div>
@@ -1196,13 +1045,11 @@
     </div>
     <h1>The Breakfast Club</h1>
     <p class="subtitle">Інтерактивний словник виразів, нових слів та медіа-матеріалів клубу</p>
-    
     <!-- Головний Пошук -->
     <div class="search-container">
       <i data-lucide="search" class="search-icon"></i>
       <input type="text" id="mainSearchInput" class="search-input" placeholder="Шукати англійське слово, переклад або приклад...">
     </div>
-
     <!-- Метрики -->
     <div class="stats-bar">
       <div class="stat-item stat-item-total">
@@ -1227,7 +1074,6 @@
       </div>
     </div>
   </header>
-
   <main>
     <!-- Панель керування (Фільтри та Сортування) -->
     <div class="controls-card">
@@ -1240,15 +1086,6 @@
           <button class="filter-btn" data-type="Кіно">Кіно</button>
         </div>
       </div>
-
-      <div class="filter-group">
-        <span class="control-label">Відображення:</span>
-        <div class="type-filter-buttons" id="groupFilters">
-          <button class="filter-btn active" data-group="merged">Згруповано</button>
-          <button class="filter-btn" data-group="unique">Всі рядки</button>
-        </div>
-      </div>
-      
       <div class="sort-group">
         <span class="control-label" for="sortSelect">Сортувати:</span>
         <div class="sort-select-wrapper">
@@ -1264,7 +1101,6 @@
         </div>
       </div>
     </div>
-
     <!-- Вкладки режимів перегляду -->
     <div class="view-tabs-container">
       <button class="view-tab-btn active" id="tab-cards" data-view="cards">
@@ -1280,13 +1116,11 @@
         <span>Хмара слів</span>
       </button>
     </div>
-
     <!-- Область очікування завантаження -->
     <div id="loadingState" class="loading-state">
       <div class="spinner"></div>
       <p>Оновлення словника в реальному часі...</p>
     </div>
-
     <!-- Помилка підключення -->
     <div id="errorState" class="error-state" style="display: none;">
       <i data-lucide="alert-triangle" class="error-icon"></i>
@@ -1294,14 +1128,11 @@
       <p>Не вдалося отримати дані з Google Sheets. Перевірте мережеве підключення або спробуйте перезапустити запит.</p>
       <button class="retry-btn" id="retryFetchBtn">Оновити сторінку</button>
     </div>
-
     <!-- СЕКЦІЇ ПРЕДСТАВЛЕНЬ -->
-
     <!-- Режим 1: Картки -->
     <section id="section-cards" class="view-section">
       <div class="cards-grid" id="cardsGrid"></div>
     </section>
-
     <!-- Режим 2: Таблиця -->
     <section id="section-table" class="view-section">
       <div class="table-wrapper">
@@ -1321,13 +1152,11 @@
         </table>
       </div>
     </section>
-
     <!-- Режим 3: Хмара слів -->
     <section id="section-cloud" class="view-section">
       <div class="tag-cloud-container" id="tagCloud"></div>
     </section>
   </main>
-
   <!-- ПЛАВАЮЧА ПАНЕЛЬ КЕРУВАННЯ -->
   <div class="floating-controls-panel" id="floatingControls">
     <div class="floating-search-box">
@@ -1338,7 +1167,6 @@
       <i data-lucide="arrow-up"></i>
     </button>
   </div>
-
   <!-- ДЕТАЛЬНИЙ ЛАЙТБОКС -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-card">
@@ -1350,25 +1178,20 @@
       </div>
     </div>
   </div>
-
   <footer>
     <p>&copy; 2026 The Breakfast Club. Дані оновлюються наживо з вашої спільної таблиці.</p>
   </footer>
-
   <script>
-    // Налаштування підключення до Google Sheets
+    // Налаштування підключення до Google Drive / Google Sheets
     const SHEET_ID = '1ypr_sWk0crqfRtMt6AggAWI2x4wBLDWOKmiMpcM0ebA';
     const GID = '0';
     const FETCH_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
-
     // Стан застосунку
     let allParsedItems = [];
     let currentView = 'cards'; // cards, table, cloud
     let searchTerm = '';
     let activeType = 'Всі';
-    let groupMode = 'merged'; // merged, unique
     let sortKey = 'id-asc';
-
     // DOM елементи
     const mainSearchInput = document.getElementById('mainSearchInput');
     const floatingSearchInput = document.getElementById('floatingSearchInput');
@@ -1379,15 +1202,12 @@
     const backToTopBtn = document.getElementById('backToTopBtn');
     const floatingControls = document.getElementById('floatingControls');
     const retryFetchBtn = document.getElementById('retryFetchBtn');
-
     const cardsGrid = document.getElementById('cardsGrid');
     const tableBody = document.getElementById('tableBody');
     const tagCloud = document.getElementById('tagCloud');
-
     const modalOverlay = document.getElementById('modalOverlay');
     const modalCloseBtn = document.getElementById('modalCloseBtn');
     const modalTarget = document.getElementById('modalTarget');
-
     /**
      * Початкове завантаження
      */
@@ -1395,7 +1215,6 @@
       fetchSheetData();
       initUIListeners();
     });
-
     /**
      * Отримання даних з Google Sheets API
      */
@@ -1409,11 +1228,9 @@
         .then(text => {
           const rawData = text.substring(text.indexOf('({') + 1, text.lastIndexOf('})') + 1);
           const parsedJson = JSON.parse(rawData);
-          
           if (!parsedJson.table || !parsedJson.table.rows) {
             throw new Error("Структура таблиці порожня чи неправильна");
           }
-
           processTableData(parsedJson.table);
           showLoading(false);
           updateAppUI();
@@ -1424,7 +1241,6 @@
           showError(true);
         });
     }
-
     /**
      * Конвертує числову дату у формат українського тексту
      */
@@ -1438,15 +1254,12 @@
       }
       return `${day}.${month}.${year}`;
     }
-
     /**
      * Розумний конвертер дати в європейський формат з українськими назвами місяців
      */
     function formatDateToUkrainian(dateStr) {
       if (!dateStr || dateStr === "—" || dateStr.trim() === "") return "—";
-      
       let cleanStr = dateStr.trim();
-      
       if (cleanStr.startsWith("Date(") && cleanStr.endsWith(")")) {
         try {
           const parts = cleanStr.slice(5, -1).split(',');
@@ -1456,7 +1269,6 @@
           return convertToUkr(day, month, year);
         } catch (e) {}
       }
-
       const dmyRegex = /^(\d{1,2})[./-](\d{1,2})[./-](\d{4}|\d{2})$/;
       const matchDmy = cleanStr.match(dmyRegex);
       if (matchDmy) {
@@ -1466,7 +1278,6 @@
         if (year < 100) year += 2000;
         return convertToUkr(day, month, year);
       }
-
       const ymdRegex = /^(\d{4})[./-](\d{1,2})[./-](\d{1,2})$/;
       const matchYmd = cleanStr.match(ymdRegex);
       if (matchYmd) {
@@ -1475,12 +1286,10 @@
         let day = parseInt(matchYmd[3], 10);
         return convertToUkr(day, month, year);
       }
-
       return dateStr;
     }
-
     /**
-     * Повертає текстовий варіант з роком у квадратних дужках (для пошуку та таблиці)
+     * Повертає повне відформатоване ім'я для відображення: NAME [YEAR] (якщо це фільм)
      */
     function getEnglishDisplay(item) {
       if (item.typeClass === 'movie' && item.movieYear) {
@@ -1488,17 +1297,6 @@
       }
       return item.english;
     }
-
-    /**
-     * Повертає відформатовану назву з гарно стилізованим роком поруч
-     */
-    function getEnglishDisplayHTML(item) {
-      if (item.typeClass === 'movie' && item.movieYear) {
-        return `${item.english} <span class="movie-year" style="font-weight: 500; font-size: 0.85em; color: var(--text-muted); margin-left: 6px;">(${item.movieYear})</span>`;
-      }
-      return item.english;
-    }
-
     /**
      * Розумне вилучення URL та Назви джерела, що підтримує дужки в URL
      */
@@ -1506,19 +1304,18 @@
       let url = "";
       let mediaTitle = "";
       if (!rawLink) return { url, mediaTitle };
-
+      // Збіг URL до першого пробілу
       const urlMatch = rawLink.match(/(https?:\/\/[^\s]+)/);
       if (urlMatch) {
         url = urlMatch[1];
-        
+        // Перевірка та балансування закриваючих дужок в кінці URL (наприклад: ...Shepherd_(2006_film))
         let openCount = (url.match(/\(/g) || []).length;
         let closeCount = (url.match(/\)/g) || []).length;
-        
         while (closeCount > openCount && url.endsWith(')')) {
           url = url.slice(0, -1);
           closeCount--;
         }
-
+        // Парсинг назви з тексту поза межами вилученого URL
         const remnant = rawLink.replace(url, '').trim();
         if (remnant) {
           const titleMatch = remnant.match(/^\(([^)]+)\)$/) || remnant.match(/\(([^)]+)\)/);
@@ -1531,7 +1328,6 @@
       } else {
         url = rawLink;
       }
-
       if (!mediaTitle && url) {
         try {
           mediaTitle = new URL(url).hostname.replace('www.', '');
@@ -1539,17 +1335,15 @@
           mediaTitle = "Джерело";
         }
       }
-
       return { url, mediaTitle };
     }
-
     /**
      * Обробка сирих рядків та адаптація до нашої моделі даних
      */
     function processTableData(jsonTable) {
       const rows = jsonTable.rows;
       if (!rows || rows.length === 0) return;
-
+      // Інтелектуальний пошук рядка заголовків
       let headerRowIndex = 0;
       for (let i = 0; i < Math.min(5, rows.length); i++) {
         const row = rows[i];
@@ -1565,10 +1359,9 @@
           }
         }
       }
-
       const headerRow = rows[headerRowIndex];
       const headers = headerRow.c.map(cell => cell && cell.v ? String(cell.v).trim() : "");
-
+      // Визначаємо індекси стовпчиків
       let idxId = -1;
       let idxDate = -1;
       let idxLink = -1;
@@ -1576,7 +1369,6 @@
       let idxEnglish = -1;
       let idxTranslation = -1;
       let idxComment = -1;
-
       headers.forEach((h, index) => {
         const hLower = h.toLowerCase();
         if (hLower.includes('№') || hLower.includes('id') || hLower === 'n') idxId = index;
@@ -1587,7 +1379,6 @@
         else if (hLower.includes('переклад') || hLower.includes('translation')) idxTranslation = index;
         else if (hLower.includes('коментар') || hLower.includes('comment') || hLower.includes('приклад')) idxComment = index;
       });
-
       if (idxId === -1) idxId = 1;
       if (idxDate === -1) idxDate = 2;
       if (idxLink === -1) idxLink = 3;
@@ -1595,20 +1386,16 @@
       if (idxEnglish === -1) idxEnglish = 5;
       if (idxTranslation === -1) idxTranslation = 6;
       if (idxComment === -1) idxComment = 7;
-
       allParsedItems = [];
-
       for (let i = headerRowIndex + 1; i < rows.length; i++) {
         const r = rows[i];
         if (!r || !r.c) continue;
-
         const getVal = (idx) => {
           if (idx < 0 || idx >= r.c.length) return "";
           const cell = r.c[idx];
           if (!cell) return "";
           return cell.v !== null && cell.v !== undefined ? String(cell.v).trim() : "";
         };
-
         const id = getVal(idxId);
         const rawDate = getVal(idxDate);
         const date = formatDateToUkrainian(rawDate);
@@ -1617,11 +1404,10 @@
         const english = getVal(idxEnglish);
         const translation = getVal(idxTranslation);
         const comment = getVal(idxComment);
-
         if (!english && !translation) continue;
-
+        // Покращений парсинг посилань та назв
         const { url, mediaTitle } = extractUrlAndTitle(rawLink);
-
+        // Отримання YouTube Video ID
         let youtubeId = "";
         if (url && (url.includes("youtube.com") || url.includes("youtu.be"))) {
           const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\s]{11})/;
@@ -1630,7 +1416,7 @@
             youtubeId = match[1];
           }
         }
-
+        // Парсинг деталей Вікіпедії
         let wikiLang = "";
         let wikiTitle = "";
         if (url) {
@@ -1640,11 +1426,10 @@
             wikiTitle = wikiMatch[2];
           }
         }
-
+        // Класифікація категорій
         let typeClass = "other";
         let typeIcon = "hash";
         let cleanType = type;
-
         if (type.toLowerCase() === "слово") {
           typeClass = "word";
           typeIcon = "book-open";
@@ -1662,13 +1447,11 @@
           typeIcon = "hash";
           cleanType = cleanType || "Інше";
         }
-
+        // Розумне відділення року випуску від англійської назви фільму
         let englishName = english;
         let movieYear = "";
-
         if (typeClass === 'movie') {
           englishName = englishName.trim().replace(/\s+/g, ' ');
-          
           const bracketMatch = englishName.match(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/);
           if (bracketMatch) {
             movieYear = bracketMatch[1];
@@ -1682,7 +1465,6 @@
           }
           englishName = englishName.replace(/\(\s*\)|\[\s*\]|\{\s*\}/g, '').replace(/\s+/g, ' ').trim();
         }
-
         allParsedItems.push({
           id: id || String(allParsedItems.length + 1),
           date: date || "—",
@@ -1702,95 +1484,17 @@
           comment
         });
       }
-
       calculateGlobalStats(allParsedItems);
     }
-
     /**
-     * Алгоритм автоматичного злиття карток з однаковою англійською назвою
+     * Рахуємо статистику всієї колекції
      */
-    function getMergedItems(items) {
-      const mergedMap = new Map();
-      
-      items.forEach(item => {
-        const key = item.english.toLowerCase().trim();
-        if (!mergedMap.has(key)) {
-          mergedMap.set(key, []);
-        }
-        mergedMap.get(key).push(item);
-      });
-      
-      const result = [];
-      
-      mergedMap.forEach((group) => {
-        if (group.length === 1) {
-          result.push({ ...group[0], isMerged: false, originalItems: group });
-        } else {
-          const first = group[0];
-          group.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-          
-          const translations = [...new Set(group.map(i => i.translation).map(t => t.trim()).filter(Boolean))];
-          const comments = [...new Set(group.map(i => i.comment).map(c => c.trim()).filter(Boolean))];
-          
-          const mediaItems = [];
-          const seenUrls = new Set();
-          group.forEach(i => {
-            if (i.url && !seenUrls.has(i.url)) {
-              seenUrls.add(i.url);
-              mediaItems.push({
-                url: i.url,
-                mediaTitle: i.mediaTitle,
-                youtubeId: i.youtubeId,
-                wikiLang: i.wikiLang,
-                wikiTitle: i.wikiTitle,
-                wikiImageUrl: i.wikiImageUrl,
-                typeClass: i.typeClass,
-                id: i.id
-              });
-            }
-          });
-
-          const ids = group.map(i => parseInt(i.id)).sort((a, b) => a - b);
-          let idDisplay = first.id;
-          if (ids.length > 1) {
-            const isConsecutive = ids.every((num, idx) => idx === 0 || num === ids[idx - 1] + 1);
-            if (isConsecutive) {
-              idDisplay = `${ids[0]}–${ids[ids.length - 1]}`;
-            } else {
-              idDisplay = ids.join(', ');
-            }
-          }
-
-          const sortedDates = [...group].sort((a, b) => parseDateString(b.date) - parseDateString(a.date));
-          const latestDate = sortedDates[0].date;
-
-          result.push({
-            id: idDisplay,
-            date: latestDate,
-            english: first.english,
-            movieYear: first.movieYear,
-            translation: translations.join(' / '),
-            comments: comments,
-            comment: comments[0] || "",
-            type: first.type,
-            typeClass: first.typeClass,
-            typeIcon: first.typeIcon,
-            isMerged: true,
-            mediaItems: mediaItems,
-            url: first.url,
-            mediaTitle: first.mediaTitle,
-            youtubeId: first.youtubeId,
-            wikiLang: first.wikiLang,
-            wikiTitle: first.wikiTitle,
-            wikiImageUrl: first.wikiImageUrl,
-            originalItems: group
-          });
-        }
-      });
-      
-      return result;
+    function calculateGlobalStats(items) {
+      document.getElementById('statTotal').innerText = items.length;
+      document.getElementById('statWords').innerText = items.filter(i => i.typeClass === 'word').length;
+      document.getElementById('statExpressions').innerText = items.filter(i => i.typeClass === 'expression').length;
+      document.getElementById('statMovies').innerText = items.filter(i => i.typeClass === 'movie').length;
     }
-
     /**
      * Показ завантаження
      */
@@ -1803,14 +1507,12 @@
         errorState.style.display = 'none';
       }
     }
-
     /**
      * Показ вікна помилки
      */
     function showError(active) {
       errorState.style.display = active ? 'flex' : 'none';
     }
-
     /**
      * Ініціалізація слухачів подій інтерфейсу
      */
@@ -1821,14 +1523,12 @@
         floatingSearchInput.value = searchTerm;
         updateAppUI();
       });
-
       floatingSearchInput.addEventListener('input', (e) => {
         searchTerm = e.target.value;
         mainSearchInput.value = searchTerm;
         updateAppUI();
       });
-
-      // Фільтри типу картки
+      // Слухачі типів фільтру
       typeFilters.addEventListener('click', (e) => {
         if (e.target.classList.contains('filter-btn')) {
           document.querySelectorAll('#typeFilters .filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -1837,62 +1537,41 @@
           updateAppUI();
         }
       });
-
-      // Перемикач групування карток
-      const groupFilters = document.getElementById('groupFilters');
-      if (groupFilters) {
-        groupFilters.addEventListener('click', (e) => {
-          if (e.target.classList.contains('filter-btn')) {
-            document.querySelectorAll('#groupFilters .filter-btn').forEach(btn => btn.classList.remove('active'));
-            e.target.classList.add('active');
-            groupMode = e.target.getAttribute('data-group');
-            updateAppUI();
-          }
-        });
-      }
-
       // Зміна сортування
       sortSelect.addEventListener('change', (e) => {
         sortKey = e.target.value;
         updateAppUI();
       });
-
       // Зміна вкладок
       document.querySelectorAll('.view-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.view-tab-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           currentView = btn.getAttribute('data-view');
-          
           document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
           document.getElementById(`section-${currentView}`).classList.add('active');
           updateAppUI();
         });
       });
-
       // Перезапуск
       retryFetchBtn.addEventListener('click', () => {
         location.reload();
       });
-
       // Скрол та плаваючі елементи
       window.addEventListener('scroll', () => {
         const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
         const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (winScroll / height) * 100;
         document.getElementById('progress-bar').style.width = scrolled + '%';
-        
         if (winScroll > 300) {
           floatingControls.classList.add('visible');
         } else {
           floatingControls.classList.remove('visible');
         }
       });
-
       backToTopBtn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
-
       // Закриття модального вікна
       modalCloseBtn.addEventListener('click', closeModal);
       modalOverlay.addEventListener('click', (e) => {
@@ -1901,7 +1580,6 @@
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModal();
       });
-
       // Кліки сортування по заголовкам таблиці
       document.getElementById('th-id').addEventListener('click', () => toggleTableSort('id'));
       document.getElementById('th-date').addEventListener('click', () => toggleTableSort('date'));
@@ -1909,7 +1587,6 @@
       document.getElementById('th-english').addEventListener('click', () => toggleTableSort('english'));
       document.getElementById('th-translation').addEventListener('click', () => toggleTableSort('translation'));
     }
-
     /**
      * Логіка сортування таблиці при кліці на заголовок
      */
@@ -1925,37 +1602,31 @@
       } else if (col === 'type') {
         sortKey = sortKey === 'type-asc' ? 'type-desc' : 'type-asc';
       }
-      
       const options = Array.from(sortSelect.options).map(opt => opt.value);
       if (options.includes(sortKey)) {
         sortSelect.value = sortKey;
       }
       updateAppUI();
     }
-
     /**
      * Конвертація українського текстового запису дати назад в об'єкт Date для точного сортування
      */
     function parseDateString(dateStr) {
       if (!dateStr || dateStr === "—") return new Date(0);
-      
       const ukrMonths = [
         "січня", "лютого", "березня", "квітня", "травня", "червня",
         "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"
       ];
-      
       const parts = dateStr.split(' ');
       if (parts.length === 3) {
         const day = parseInt(parts[0], 10);
         const monthStr = parts[1].toLowerCase();
         const year = parseInt(parts[2], 10);
-        
         const monthIndex = ukrMonths.indexOf(monthStr);
         if (monthIndex !== -1 && !isNaN(day) && !isNaN(year)) {
           return new Date(year, monthIndex, day);
         }
       }
-      
       const partsDot = dateStr.split('.');
       if (partsDot.length === 3) {
         const day = parseInt(partsDot[0], 10);
@@ -1963,40 +1634,25 @@
         const year = parseInt(partsDot[2], 10);
         return new Date(year, month, day);
       }
-      
       return new Date(0);
     }
-
     /**
      * Фільтрація та Сортування
      */
     function getProcessedDataset() {
-      let data = [];
-      if (groupMode === 'merged') {
-        data = getMergedItems(allParsedItems);
-      } else {
-        data = [...allParsedItems];
-      }
-
+      let data = [...allParsedItems];
       // Текстовий пошук
       if (searchTerm) {
         const term = searchTerm.toLowerCase();
         data = data.filter(item => {
           const displayEng = getEnglishDisplay(item).toLowerCase();
-          const translationMatch = item.translation.toLowerCase().includes(term);
-          const commentMatch = item.comments 
-            ? item.comments.some(c => c.toLowerCase().includes(term)) 
-            : item.comment.toLowerCase().includes(term);
-          const dateMatch = item.date.toLowerCase().includes(term);
-          
-          const mediaTitleMatch = item.isMerged && item.mediaItems
-            ? item.mediaItems.some(m => m.mediaTitle.toLowerCase().includes(term))
-            : item.mediaTitle.toLowerCase().includes(term);
-
-          return displayEng.includes(term) || translationMatch || commentMatch || dateMatch || mediaTitleMatch;
+          return displayEng.includes(term) ||
+            item.translation.toLowerCase().includes(term) ||
+            item.comment.toLowerCase().includes(term) ||
+            item.date.toLowerCase().includes(term) ||
+            item.mediaTitle.toLowerCase().includes(term);
         });
       }
-
       // Типовий фільтр
       if (activeType !== 'Всі') {
         data = data.filter(item => {
@@ -2006,20 +1662,11 @@
           return false;
         });
       }
-
       // Сортування
       if (sortKey === 'id-asc') {
-        data.sort((a, b) => {
-          const aId = parseInt(String(a.id).split(/[–,-]/)[0]);
-          const bId = parseInt(String(b.id).split(/[–,-]/)[0]);
-          return aId - bId;
-        });
+        data.sort((a, b) => parseInt(a.id) - parseInt(b.id));
       } else if (sortKey === 'id-desc') {
-        data.sort((a, b) => {
-          const aId = parseInt(String(a.id).split(/[–,-]/)[0]);
-          const bId = parseInt(String(b.id).split(/[–,-]/)[0]);
-          return bId - aId;
-        });
+        data.sort((a, b) => parseInt(b.id) - parseInt(a.id));
       } else if (sortKey === 'en-asc') {
         data.sort((a, b) => getEnglishDisplay(a).localeCompare(getEnglishDisplay(b)));
       } else if (sortKey === 'en-desc') {
@@ -2037,24 +1684,20 @@
       } else if (sortKey === 'type-desc') {
         data.sort((a, b) => b.type.localeCompare(a.type));
       }
-
       return data;
     }
-
     /**
      * Основна функція оновлення інтерфейсу
      */
     function updateAppUI() {
       const activeData = getProcessedDataset();
-
+      // Візуальне перемикання активного розділу
       document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(`section-${currentView}`).classList.add('active');
-
       if (activeData.length === 0) {
         renderNoResults();
         return;
       }
-
       if (currentView === 'cards') {
         renderCardsView(activeData);
         fetchWikiImagesForVisibleCards(activeData);
@@ -2063,38 +1706,18 @@
       } else if (currentView === 'cloud') {
         renderCloudView(activeData);
       }
-
+      // Ініціалізація іконок Lucide для нових елементів
       lucide.createIcons();
     }
-
-    /**
-     * Відображення стану "Нічого не знайдено"
-     */
-    function renderNoResults() {
-      const emptyHtml = `
-        <div class="no-results">
-          <i data-lucide="search-x" class="no-results-icon"></i>
-          <h3>Елементів не виявлено</h3>
-          <p>Спробуйте очистити пошуковий запит або змінити критерії фільтрації.</p>
-        </div>
-      `;
-      cardsGrid.innerHTML = emptyHtml;
-      tableBody.innerHTML = `<tr><td colspan="7">${emptyHtml}</td></tr>`;
-      tagCloud.innerHTML = emptyHtml;
-      lucide.createIcons();
-    }
-
     /**
      * Завантаження зображення з Вікіпедії з кешуванням
      */
     function loadWikiImage(item, callback) {
       if (!item.wikiTitle || !item.wikiLang) return;
-      
       if (item.wikiImageUrl) {
         callback(item.wikiImageUrl);
         return;
       }
-      
       const apiUrl = `https://${item.wikiLang}.wikipedia.org/api/rest_v1/page/summary/${item.wikiTitle}`;
       fetch(apiUrl)
         .then(res => {
@@ -2115,32 +1738,12 @@
           callback(null);
         });
     }
-
     /**
      * Отримує зображення Вікіпедії для поточних видимих карт
      */
     function fetchWikiImagesForVisibleCards(items) {
       items.forEach(item => {
-        if (item.isMerged && item.mediaItems) {
-          item.mediaItems.forEach(media => {
-            if (media.wikiTitle) {
-              const imgEl = document.getElementById(`wiki-img-${media.id}`);
-              if (imgEl && !imgEl.classList.contains('loaded')) {
-                loadWikiImage(media, (imgUrl) => {
-                  if (imgUrl) {
-                    imgEl.src = imgUrl;
-                    imgEl.style.display = 'block';
-                    imgEl.onload = () => {
-                      imgEl.classList.add('loaded');
-                    };
-                  } else {
-                    imgEl.style.display = 'none';
-                  }
-                });
-              }
-            }
-          });
-        } else if (item.wikiTitle) {
+        if (item.wikiTitle) {
           const imgEl = document.getElementById(`wiki-img-${item.id}`);
           if (imgEl && !imgEl.classList.contains('loaded')) {
             loadWikiImage(item, (imgUrl) => {
@@ -2158,82 +1761,63 @@
         }
       });
     }
-
     /**
-     * Побудова окремого медіа-блоку
+     * Побудова медіа блоку картки (підтримує YouTube, прев'ю Вікіпедії та звичайні посилання)
      */
-    function buildSingleMediaHtml(media, isModal = false) {
-      if (!media.url) return '';
-
-      const containerId = isModal 
-        ? `modal-media-wrapper-${media.id}-${Math.floor(Math.random() * 1000)}` 
-        : `media-container-${media.id}`;
-
-      if (media.youtubeId) {
+    function buildMediaHtml(item, isModal = false) {
+      if (!item.url) return '';
+      const containerId = isModal ? `modal-media-wrapper-${item.id}` : `media-container-${item.id}`;
+      if (item.youtubeId) {
         return `
-          <div class="card-media" id="${containerId}" style="margin-top: 10px;">
-            <div class="youtube-preview" onclick="playYoutubeInline('${media.youtubeId}', '${containerId}')" title="Дивитись наживо">
-              <img src="https://img.youtube.com/vi/${media.youtubeId}/hqdefault.jpg" alt="${media.mediaTitle}">
+          <div class="card-media" id="${containerId}">
+            <div class="youtube-preview" onclick="playYoutubeInline('${item.youtubeId}', '${containerId}')" title="Дивитись наживо">
+              <img src="https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg" alt="${item.mediaTitle}">
               <div class="youtube-overlay">
                 <div class="youtube-play-btn">
                   <i data-lucide="play"></i>
                 </div>
               </div>
-              <span class="media-caption">${media.mediaTitle}</span>
+              <span class="media-caption">${item.mediaTitle}</span>
             </div>
           </div>
         `;
-      } else if (media.wikiTitle) {
-        const imgId = isModal 
-          ? `modal-wiki-img-${media.id}-${Math.floor(Math.random() * 1000)}` 
-          : `wiki-img-${media.id}`;
-        const hasImage = media.wikiImageUrl && media.wikiImageUrl !== 'no-image';
-        const srcUrl = hasImage ? media.wikiImageUrl : "";
-        
+      } else if (item.wikiTitle) {
+        const imgId = isModal ? `modal-wiki-img-${item.id}` : `wiki-img-${item.id}`;
+        const hasImage = item.wikiImageUrl && item.wikiImageUrl !== 'no-image';
+        const srcUrl = hasImage ? item.wikiImageUrl : "";
+        // Зображення рендериться прихованим і плавно вмикається після завантаження
         const imgHtml = srcUrl 
           ? `<img id="${imgId}" src="${srcUrl}" alt="" class="loaded">` 
           : `<img id="${imgId}" src="" alt="" style="display: none;">`;
-        
         return `
-          <div class="card-media" id="${containerId}" style="margin-top: 10px;">
-            <a href="${media.url}" target="_blank" class="wikipedia-preview" title="Читати у Вікіпедії">
+          <div class="card-media" id="${containerId}">
+            <a href="${item.url}" target="_blank" class="wikipedia-preview" title="Читати у Вікіпедії">
               ${imgHtml}
               <div class="wiki-overlay">
                 <div class="wiki-logo-btn">
                   <i data-lucide="book-open"></i>
                 </div>
               </div>
-              <span class="media-caption">${media.mediaTitle}</span>
+              <span class="media-caption">${item.mediaTitle}</span>
             </a>
           </div>
         `;
       } else {
         return `
-          <div class="card-media" style="margin-top: 10px;">
-            <a href="${media.url}" target="_blank" class="generic-link-preview" title="Відкрити ресурс">
+          <div class="card-media">
+            <a href="${item.url}" target="_blank" class="generic-link-preview" title="Відкрити ресурс">
               <div class="link-icon-container">
-                <i data-lucide="${media.typeClass === 'movie' ? 'film' : 'external-link'}"></i>
+                <i data-lucide="${item.typeClass === 'movie' ? 'film' : 'external-link'}"></i>
               </div>
               <div class="link-details">
-                <span class="link-title">${media.mediaTitle || 'Детальніше'}</span>
-                <span class="link-domain">${getDomainName(media.url)}</span>
+                <span class="link-title">${item.mediaTitle || 'Детальніше'}</span>
+                <span class="link-domain">${getDomainName(item.url)}</span>
               </div>
             </a>
           </div>
         `;
       }
     }
-
-    /**
-     * Побудова медіа блоку картки (підтримує об'єднання декількох посилань)
-     */
-    function buildMediaHtml(item, isModal = false) {
-      if (item.isMerged && item.mediaItems && item.mediaItems.length > 0) {
-        return item.mediaItems.map(media => buildSingleMediaHtml(media, isModal)).join('');
-      }
-      return buildSingleMediaHtml(item, isModal);
-    }
-
     function getDomainName(urlStr) {
       try {
         return new URL(urlStr).hostname.replace('www.', '');
@@ -2241,14 +1825,12 @@
         return 'посилання';
       }
     }
-
     /**
      * Миттєве вбудовування YouTube у контейнер картки
      */
     function playYoutubeInline(videoId, containerId) {
       const container = document.getElementById(containerId);
       if (!container) return;
-      
       container.innerHTML = `
         <div class="iframe-wrapper">
           <iframe 
@@ -2260,32 +1842,19 @@
         </div>
       `;
     }
-
     /**
      * 1. РЕНДЕРИНГ КАРТОК
      */
     function renderCardsView(data) {
       cardsGrid.innerHTML = '';
       data.forEach(item => {
-        let commentHtml = '';
-        if (item.isMerged && item.comments && item.comments.length > 0) {
-          commentHtml = item.comments.map(c => `
-            <div class="card-comment" style="margin-top: 8px;">
-              <i data-lucide="quote"></i>
-              <span>${c}</span>
-            </div>
-          `).join('');
-        } else if (item.comment) {
-          commentHtml = `
-            <div class="card-comment">
-              <i data-lucide="quote"></i>
-              <span>${item.comment}</span>
-            </div>
-          `;
-        }
-
+        const commentHtml = item.comment ? `
+          <div class="card-comment">
+            <i data-lucide="quote"></i>
+            <span>${item.comment}</span>
+          </div>
+        ` : '';
         const mediaHtml = buildMediaHtml(item);
-
         const cardHtml = `
           <div class="vocab-card card-${item.typeClass}">
             <div>
@@ -2297,7 +1866,7 @@
                 <span class="card-meta">№ ${item.id} • ${item.date}</span>
               </div>
               <div class="card-body">
-                <h3 class="card-english">${getEnglishDisplayHTML(item)}</h3>
+                <h3 class="card-english">${getEnglishDisplay(item)}</h3>
                 <div class="card-divider"></div>
                 <p class="card-translation">${item.translation}</p>
                 ${commentHtml}
@@ -2309,7 +1878,6 @@
         cardsGrid.insertAdjacentHTML('beforeend', cardHtml);
       });
     }
-
     /**
      * 2. РЕНДЕРИНГ ТАБЛИЦІ
      */
@@ -2328,7 +1896,6 @@
             </a>
           `;
         }
-
         const trHtml = `
           <tr>
             <td><strong>#${item.id}</strong></td>
@@ -2348,13 +1915,11 @@
         tableBody.insertAdjacentHTML('beforeend', trHtml);
       });
     }
-
     /**
      * 3. РЕНДЕРИНГ ХМАРИ СЛІВ
      */
     function renderCloudView(data) {
       tagCloud.innerHTML = '';
-      
       data.forEach((item, index) => {
         let sizeClass = 'f-size-md';
         const displayEng = getEnglishDisplay(item);
@@ -2366,7 +1931,6 @@
         } else {
           sizeClass = 'f-size-xl';
         }
-
         const tagHtml = `
           <button class="cloud-tag tag-${item.typeClass} ${sizeClass}" onclick="openModal('${item.id}')">
             <span>${displayEng}</span>
@@ -2376,34 +1940,19 @@
         tagCloud.insertAdjacentHTML('beforeend', tagHtml);
       });
     }
-
     /**
-     * ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА (Підтримує як звичайні, так і згруповані картки)
+     * ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА
      */
     function openModal(itemId) {
-      const activeData = getProcessedDataset();
-      const item = activeData.find(i => String(i.id) === String(itemId));
+      const item = allParsedItems.find(i => i.id === itemId);
       if (!item) return;
-
       const mediaHtml = buildMediaHtml(item, true);
-      
-      let commentHtml = '';
-      if (item.isMerged && item.comments && item.comments.length > 0) {
-        commentHtml = item.comments.map(c => `
-          <div class="card-comment" style="margin-top: 12px;">
-            <i data-lucide="quote"></i>
-            <span>${c}</span>
-          </div>
-        `).join('');
-      } else if (item.comment) {
-        commentHtml = `
-          <div class="card-comment" style="margin-top: 15px;">
-            <i data-lucide="quote"></i>
-            <span>${item.comment}</span>
-          </div>
-        `;
-      }
-
+      const commentHtml = item.comment ? `
+        <div class="card-comment" style="margin-top: 15px;">
+          <i data-lucide="quote"></i>
+          <span>${item.comment}</span>
+        </div>
+      ` : '';
       modalTarget.innerHTML = `
         <div class="card-header" style="margin-bottom: 20px;">
           <span class="badge badge-${item.typeClass}">
@@ -2412,7 +1961,7 @@
           </span>
           <span class="card-meta">№ ${item.id} • ${item.date}</span>
         </div>
-        <h2 class="card-english" style="font-size: 1.8rem; line-height: 1.3; margin-bottom: 10px;">${getEnglishDisplayHTML(item)}</h2>
+        <h2 class="card-english" style="font-size: 1.8rem; line-height: 1.3; margin-bottom: 10px;">${getEnglishDisplay(item)}</h2>
         <div class="card-divider" style="width: 50px; height: 4px; background-color: var(--primary-red); margin-bottom: 15px;"></div>
         <p class="card-translation" style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 20px;">${item.translation}</p>
         ${commentHtml}
@@ -2420,31 +1969,9 @@
           ${mediaHtml}
         </div>
       `;
-
       modalOverlay.classList.add('active');
       lucide.createIcons();
-
-      // Динамічний пошук та завантаження фото Вікіпедії для модального вікна
-      if (item.isMerged && item.mediaItems) {
-        item.mediaItems.forEach(media => {
-          if (media.wikiTitle) {
-            const modalImgEl = document.querySelector(`[id^="modal-wiki-img-${media.id}"]`);
-            if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
-              loadWikiImage(media, (imgUrl) => {
-                if (imgUrl) {
-                  modalImgEl.src = imgUrl;
-                  modalImgEl.style.display = 'block';
-                  modalImgEl.onload = () => {
-                    modalImgEl.classList.add('loaded');
-                  };
-                } else {
-                  modalImgEl.style.display = 'none';
-                }
-              });
-            }
-          }
-        });
-      } else if (item.wikiTitle) {
+      if (item.wikiTitle) {
         const modalImgEl = document.getElementById(`modal-wiki-img-${item.id}`);
         if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
           loadWikiImage(item, (imgUrl) => {
@@ -2461,7 +1988,6 @@
         }
       }
     }
-
     function closeModal() {
       modalOverlay.classList.remove('active');
       modalTarget.innerHTML = '';
