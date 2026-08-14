@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Breakfast Club Visualizer ☕</title>
+  <title>The Breakfast Club Visualizer</title>
   
   <!-- Захист від помилок блокування YouTube-плеєра -->
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -18,16 +18,16 @@
 
   <style>
     :root {
-      --primary-red: #E11D48;      /* Головний червоний акцент */
-      --primary-red-hover: #BE123C;
-      --bg-light: #F8FAFC;         /* Фоновий сірий */
-      --bg-card: #FFFFFF;          /* Білі картки */
-      --border-color: #E2E8F0;     /* Світла межа */
-      --text-main: #0F172A;        /* Контрастний темний */
-      --text-muted: #64748B;       /* Сірий для другорядних елементів */
-      --accent-blue: #0EA5E9;      /* Блакитний акцент для Слів */
-      --accent-purple: #8B5CF6;    /* Фіолетовий акцент для Кіно */
-      --accent-green: #10B981;     /* Зелений для загального */
+      --primary-red: #b80000;         /* Корпоративний червоний */
+      --primary-red-hover: #900000;
+      --bg-light: #F4F6F9;            /* Світлий преміальний фоновий сірий */
+      --bg-card: #FFFFFF;             /* Чистий білий */
+      --border-color: #E2E8F0;        /* Тонкі рамки */
+      --text-main: #0B192C;           /* Корпоративний темно-синій для тексту */
+      --text-muted: #64748B;          /* Спокійний сірий */
+      --accent-blue: #1E3E62;         /* Другорядний темно-синій */
+      --accent-purple: #312E81;       /* Темно-фіолетовий для таблиць/хмар */
+      --accent-green: #15803D;        /* Спокійний зелений */
       --font-family: 'Montserrat', sans-serif;
     }
 
@@ -59,55 +59,57 @@
 
     /* Шапка */
     header {
-      padding: 50px 20px 30px;
+      padding: 60px 20px 40px;
       text-align: center;
       position: relative;
-      background: radial-gradient(circle at top, rgba(225, 29, 72, 0.04) 0%, transparent 75%);
-      border-bottom: 1px solid var(--border-color);
+      background: radial-gradient(circle at top, rgba(184, 0, 0, 0.08) 0%, transparent 60%), #0B192C;
+      border-bottom: 4px solid var(--primary-red);
+      box-shadow: 0 10px 30px rgba(11, 25, 44, 0.1);
     }
 
     .live-indicator {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background-color: rgba(16, 185, 129, 0.1);
-      color: var(--accent-green);
-      padding: 4px 12px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      padding: 6px 14px;
       border-radius: 50px;
       font-size: 0.75rem;
       font-weight: 700;
       margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .live-dot {
       width: 8px;
       height: 8px;
-      background-color: var(--accent-green);
+      background-color: var(--primary-red);
       border-radius: 50%;
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0% { transform: scale(0.9); opacity: 0.6; }
+      0 { transform: scale(0.9); opacity: 0.6; }
       50% { transform: scale(1.2); opacity: 1; }
       100% { transform: scale(0.9); opacity: 0.6; }
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 800;
-      letter-spacing: -1px;
-      margin-bottom: 8px;
-      color: var(--text-main);
+      letter-spacing: -1.5px;
+      margin-bottom: 12px;
+      color: #FFFFFF;
     }
 
     .subtitle {
-      font-size: 1.1rem;
-      color: var(--text-muted);
+      font-size: 1.15rem;
+      color: #94A3B8;
       max-width: 600px;
-      margin: 0 auto 30px;
+      margin: 0 auto 35px;
       font-weight: 400;
     }
 
@@ -130,6 +132,7 @@
       align-items: center;
       gap: 6px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      color: var(--text-main);
     }
 
     .stat-item i {
@@ -179,7 +182,7 @@
     .search-input:focus {
       outline: none;
       border-color: var(--primary-red);
-      box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.08), 0 8px 25px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 0 0 4px rgba(184, 0, 0, 0.08), 0 8px 25px rgba(0, 0, 0, 0.05);
     }
 
     .search-icon {
@@ -198,9 +201,9 @@
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 16px 20px;
+      padding: 20px;
       margin-bottom: 30px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
+      box-shadow: 0 4px 20px rgba(11, 25, 44, 0.03);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -229,13 +232,13 @@
     }
 
     .filter-btn {
-      padding: 6px 14px;
+      padding: 8px 18px;
       border-radius: 30px;
       border: 1px solid var(--border-color);
       background: transparent;
       font-family: var(--font-family);
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
       transition: all 0.2s ease;
@@ -249,7 +252,8 @@
     .filter-btn.active {
       background-color: var(--primary-red);
       border-color: var(--primary-red);
-      color: white;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(184, 0, 0, 0.2);
     }
 
     .sort-select-wrapper {
@@ -263,10 +267,10 @@
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 30px;
-      padding: 6px 32px 6px 14px;
+      padding: 8px 32px 8px 14px;
       font-family: var(--font-family);
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-main);
       cursor: pointer;
       outline: none;
@@ -293,8 +297,8 @@
       gap: 8px;
       margin: 0 auto 30px;
       max-width: 500px;
-      background-color: rgba(226, 232, 240, 0.5);
-      padding: 5px;
+      background-color: rgba(226, 232, 240, 0.8);
+      padding: 6px;
       border-radius: 50px;
       border: 1px solid var(--border-color);
     }
@@ -304,8 +308,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 8px 16px;
+      gap: 8px;
+      padding: 10px 18px;
       border-radius: 50px;
       border: none;
       background: transparent;
@@ -322,9 +326,9 @@
     }
 
     .view-tab-btn.active {
-      background-color: var(--bg-card);
-      color: var(--primary-red);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      background-color: var(--text-main);
+      color: #FFFFFF;
+      box-shadow: 0 4px 15px rgba(11, 25, 44, 0.15);
     }
 
     /* Спільний робочий контейнер */
@@ -352,19 +356,20 @@
     .vocab-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 20px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 280px;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+      min-height: 300px;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+      box-shadow: 0 4px 20px rgba(11, 25, 44, 0.02);
     }
 
     .vocab-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(11, 25, 44, 0.08);
+      border-color: rgba(30, 62, 98, 0.2);
     }
 
     /* Кольорове маркування зліва відповідно до типу */
@@ -392,9 +397,9 @@
       letter-spacing: 0.5px;
     }
 
-    .badge-word { background-color: rgba(14, 165, 233, 0.08); color: var(--accent-blue); }
-    .badge-expression { background-color: rgba(225, 29, 72, 0.08); color: var(--primary-red); }
-    .badge-movie { background-color: rgba(139, 92, 246, 0.08); color: var(--accent-purple); }
+    .badge-word { background-color: rgba(30, 62, 98, 0.08); color: var(--accent-blue); }
+    .badge-expression { background-color: rgba(184, 0, 0, 0.08); color: var(--primary-red); }
+    .badge-movie { background-color: rgba(49, 46, 129, 0.08); color: var(--accent-purple); }
     .badge-other { background-color: rgba(100, 116, 139, 0.08); color: var(--text-muted); }
 
     .card-meta {
@@ -506,7 +511,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4);
+      box-shadow: 0 4px 15px rgba(184, 0, 0, 0.4);
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -525,7 +530,7 @@
       display: block;
       width: 100%;
       aspect-ratio: 16 / 9;
-      background-color: #E2E8F0;
+      background: linear-gradient(135deg, #1E3E62 0%, #0B192C 100%);
       border-radius: 10px;
       overflow: hidden;
       cursor: pointer;
@@ -539,7 +544,7 @@
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
 
     .wikipedia-preview img.loaded {
@@ -570,13 +575,13 @@
     .wiki-logo-btn {
       width: 44px;
       height: 44px;
-      background-color: var(--accent-purple);
+      background-color: var(--primary-red);
       border-radius: 50%;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      box-shadow: 0 4px 15px rgba(184, 0, 0, 0.4);
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -621,7 +626,7 @@
       height: 100%;
     }
 
-    /* Загальне веб-посилання (наприклад, Вікіпедія) */
+    /* Загальне веб-посилання */
     .generic-link-preview {
       display: flex;
       align-items: center;
@@ -636,15 +641,15 @@
     }
 
     .generic-link-preview:hover {
-      border-color: var(--accent-purple);
-      background-color: rgba(139, 92, 246, 0.02);
+      border-color: var(--accent-blue);
+      background-color: rgba(30, 62, 98, 0.02);
     }
 
     .link-icon-container {
       width: 32px;
       height: 32px;
-      background-color: rgba(139, 92, 246, 0.1);
-      color: var(--accent-purple);
+      background-color: rgba(30, 62, 98, 0.1);
+      color: var(--accent-blue);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -765,7 +770,7 @@
     }
 
     .table-media-link.yt-link {
-      background-color: rgba(225, 29, 72, 0.08);
+      background-color: rgba(184, 0, 0, 0.08);
       color: var(--primary-red);
     }
 
@@ -775,12 +780,12 @@
     }
 
     .table-media-link.wiki-link {
-      background-color: rgba(139, 92, 246, 0.08);
-      color: var(--accent-purple);
+      background-color: rgba(30, 62, 98, 0.08);
+      color: var(--accent-blue);
     }
 
     .table-media-link.wiki-link:hover {
-      background-color: var(--accent-purple);
+      background-color: var(--accent-blue);
       color: white;
     }
 
@@ -791,7 +796,7 @@
       justify-content: center;
       gap: 12px;
       padding: 40px 20px;
-      background: radial-gradient(circle at center, rgba(14, 165, 233, 0.02) 0%, rgba(225, 29, 72, 0.02) 100%);
+      background: radial-gradient(circle at center, rgba(30, 62, 98, 0.02) 0%, rgba(184, 0, 0, 0.02) 100%);
       border-radius: 20px;
       border: 1.5px dashed var(--border-color);
       min-height: 380px;
@@ -817,7 +822,7 @@
     /* Категорії хмари */
     .cloud-tag.tag-word {
       background-color: #FFFFFF;
-      border-color: rgba(14, 165, 233, 0.2);
+      border-color: rgba(30, 62, 98, 0.2);
       color: var(--accent-blue);
     }
     .cloud-tag.tag-word:hover {
@@ -827,7 +832,7 @@
 
     .cloud-tag.tag-expression {
       background-color: #FFFFFF;
-      border-color: rgba(225, 29, 72, 0.2);
+      border-color: rgba(184, 0, 0, 0.2);
       color: var(--primary-red);
     }
     .cloud-tag.tag-expression:hover {
@@ -837,7 +842,7 @@
 
     .cloud-tag.tag-movie {
       background-color: #FFFFFF;
-      border-color: rgba(139, 92, 246, 0.2);
+      border-color: rgba(49, 46, 129, 0.2);
       color: var(--accent-purple);
     }
     .cloud-tag.tag-movie:hover {
@@ -1003,7 +1008,7 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
+      box-shadow: 0 4px 10px rgba(184, 0, 0, 0.15);
       flex-shrink: 0;
     }
 
@@ -1030,7 +1035,7 @@
     .spinner {
       width: 40px;
       height: 40px;
-      border: 3px solid rgba(225, 29, 72, 0.1);
+      border: 3px solid rgba(184, 0, 0, 0.1);
       border-top-color: var(--primary-red);
       border-radius: 50%;
       animation: spin 0.8s infinite linear;
@@ -1120,7 +1125,7 @@
       margin-top: 50px;
     }
 
-    /* АДАПТИВНІСТЬ (Responsive Design) */
+    /* АДАПТИВНІСТЬ */
     @media (max-width: 768px) {
       h1 { font-size: 1.8rem; }
       .subtitle { font-size: 0.95rem; margin-bottom: 20px; }
@@ -1154,7 +1159,6 @@
         width: 100%;
       }
 
-      /* Плаваюча панель на весь екран внизу для мобільних */
       .floating-controls-panel {
         bottom: 15px;
         left: 15px;
@@ -1257,15 +1261,15 @@
     <div class="view-tabs-container">
       <button class="view-tab-btn active" id="tab-cards" data-view="cards">
         <i data-lucide="layout-grid"></i>
-        <span>Картки 🎴</span>
+        <span>Картки</span>
       </button>
       <button class="view-tab-btn" id="tab-table" data-view="table">
         <i data-lucide="list"></i>
-        <span>Таблиця 📋</span>
+        <span>Таблиця</span>
       </button>
       <button class="view-tab-btn" id="tab-cloud" data-view="cloud">
         <i data-lucide="cloud"></i>
-        <span>Хмара слів ☁️</span>
+        <span>Хмара слів</span>
       </button>
     </div>
 
@@ -1327,7 +1331,7 @@
     </button>
   </div>
 
-  <!-- ДЕТАЛЬНИЙ ЛАЙТБОКС (Модальне вікно для Хмари слів) -->
+  <!-- ДЕТАЛЬНИЙ ЛАЙТБОКС -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-card">
       <button class="modal-close-btn" id="modalCloseBtn" title="Закрити">
@@ -1394,7 +1398,6 @@
           return res.text();
         })
         .then(text => {
-          // Парсинг JSON-відповіді з gviz/tq (відрізаємо обгортку)
           const rawData = text.substring(text.indexOf('({') + 1, text.lastIndexOf('})') + 1);
           const parsedJson = JSON.parse(rawData);
           
@@ -1435,7 +1438,6 @@
       
       let cleanStr = dateStr.trim();
       
-      // Перевіряємо формат дати з Google Sheets JSON: Date(2026,7,14) (місяці починаються з 0)
       if (cleanStr.startsWith("Date(") && cleanStr.endsWith(")")) {
         try {
           const parts = cleanStr.slice(5, -1).split(',');
@@ -1446,7 +1448,6 @@
         } catch (e) {}
       }
 
-      // Перевіряємо формат DD.MM.YYYY, DD-MM-YYYY, DD/MM/YYYY
       const dmyRegex = /^(\d{1,2})[./-](\d{1,2})[./-](\d{4}|\d{2})$/;
       const matchDmy = cleanStr.match(dmyRegex);
       if (matchDmy) {
@@ -1457,7 +1458,6 @@
         return convertToUkr(day, month, year);
       }
 
-      // Перевіряємо формат YYYY-MM-DD
       const ymdRegex = /^(\d{4})[./-](\d{1,2})[./-](\d{1,2})$/;
       const matchYmd = cleanStr.match(ymdRegex);
       if (matchYmd) {
@@ -1478,6 +1478,53 @@
         return `${item.english} [${item.movieYear}]`;
       }
       return item.english;
+    }
+
+    /**
+     * Розумне вилучення URL та Назви джерела, що підтримує дужки в URL
+     */
+    function extractUrlAndTitle(rawLink) {
+      let url = "";
+      let mediaTitle = "";
+      if (!rawLink) return { url, mediaTitle };
+
+      // Збіг URL до першого пробілу
+      const urlMatch = rawLink.match(/(https?:\/\/[^\s]+)/);
+      if (urlMatch) {
+        url = urlMatch[1];
+        
+        // Перевірка та балансування закриваючих дужок в кінці URL (наприклад: ...Shepherd_(2006_film))
+        let openCount = (url.match(/\(/g) || []).length;
+        let closeCount = (url.match(/\)/g) || []).length;
+        
+        while (closeCount > openCount && url.endsWith(')')) {
+          url = url.slice(0, -1);
+          closeCount--;
+        }
+
+        // Парсинг назви з тексту поза межами вилученого URL
+        const remnant = rawLink.replace(url, '').trim();
+        if (remnant) {
+          const titleMatch = remnant.match(/^\(([^)]+)\)$/) || remnant.match(/\(([^)]+)\)/);
+          if (titleMatch) {
+            mediaTitle = titleMatch[1];
+          } else {
+            mediaTitle = remnant;
+          }
+        }
+      } else {
+        url = rawLink;
+      }
+
+      if (!mediaTitle && url) {
+        try {
+          mediaTitle = new URL(url).hostname.replace('www.', '');
+        } catch (e) {
+          mediaTitle = "Джерело";
+        }
+      }
+
+      return { url, mediaTitle };
     }
 
     /**
@@ -1527,7 +1574,6 @@
         else if (hLower.includes('коментар') || hLower.includes('comment') || hLower.includes('приклад')) idxComment = index;
       });
 
-      // Запасний варіант мапування (якщо структура різко змінилась)
       if (idxId === -1) idxId = 1;
       if (idxDate === -1) idxDate = 2;
       if (idxLink === -1) idxLink = 3;
@@ -1538,7 +1584,6 @@
 
       allParsedItems = [];
 
-      // Проходимо по рядкам даних, починаючи з наступного після заголовків
       for (let i = headerRowIndex + 1; i < rows.length; i++) {
         const r = rows[i];
         if (!r || !r.c) continue;
@@ -1559,39 +1604,10 @@
         const translation = getVal(idxTranslation);
         const comment = getVal(idxComment);
 
-        // Перевіряємо заповненість полів, інакше рядок порожній
         if (!english && !translation) continue;
 
-        // Парсинг посилань у форматі: "URL (Заголовок медіа)" або просто "URL"
-        let url = "";
-        let mediaTitle = "";
-        if (rawLink) {
-          const urlMatch = rawLink.match(/(https?:\/\/[^\s()]+)/);
-          if (urlMatch) {
-            url = urlMatch[1].replace(/[()]+$/, '');
-            
-            const titleMatch = rawLink.match(/\(([^)]+)\)/);
-            if (titleMatch) {
-              mediaTitle = titleMatch[1];
-            } else {
-              const urlIdx = rawLink.indexOf(url);
-              if (urlIdx !== -1) {
-                const remnant = rawLink.slice(urlIdx + url.length).trim();
-                if (remnant) mediaTitle = remnant;
-              }
-            }
-          } else {
-            url = rawLink;
-          }
-
-          if (!mediaTitle && url) {
-            try {
-              mediaTitle = new URL(url).hostname.replace('www.', '');
-            } catch (e) {
-              mediaTitle = "Джерело";
-            }
-          }
-        }
+        // Покращений парсинг посилань та назв
+        const { url, mediaTitle } = extractUrlAndTitle(rawLink);
 
         // Отримання YouTube Video ID
         let youtubeId = "";
@@ -1603,7 +1619,7 @@
           }
         }
 
-        // Парсинг деталей Вікіпедії (мова та заголовок сторінки)
+        // Парсинг деталей Вікіпедії
         let wikiLang = "";
         let wikiTitle = "";
         if (url) {
@@ -1614,7 +1630,7 @@
           }
         }
 
-        // Класифікація категорій для забарвлення
+        // Класифікація категорій
         let typeClass = "other";
         let typeIcon = "hash";
         let cleanType = type;
@@ -1644,20 +1660,17 @@
         if (typeClass === 'movie') {
           englishName = englishName.trim().replace(/\s+/g, ' ');
           
-          // 1. Спроба витягнути рік у дужках чи квадратних дужках будь-де
           const bracketMatch = englishName.match(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/);
           if (bracketMatch) {
             movieYear = bracketMatch[1];
             englishName = englishName.replace(/[([]\s*\b(19\d{2}|20\d{2})\b\s*[\])]/g, '').trim();
           } else {
-            // 2. Спроба витягнути вільний рік в кінці стрічки
             const endMatch = englishName.match(/(?:[,\-\s]+)\b(19\d{2}|20\d{2})\b\s*$/);
             if (endMatch) {
               movieYear = endMatch[1];
               englishName = englishName.replace(/(?:[,\-\s]+)\b(19\d{2}|20\d{2})\b\s*$/, '').trim();
             }
           }
-          // Очистка порожніх дужок після фільтрації
           englishName = englishName.replace(/\(\s*\)|\[\s*\]|\{\s*\}/g, '').replace(/\s+/g, ' ').trim();
         }
 
@@ -1670,7 +1683,7 @@
           youtubeId,
           wikiLang,
           wikiTitle,
-          wikiImageUrl: "", // Буде кешуватись при першому запиті до API Вікіпедії
+          wikiImageUrl: "",
           type: cleanType,
           typeClass,
           typeIcon,
@@ -1681,7 +1694,6 @@
         });
       }
 
-      // Оновлення глобальних показників
       calculateGlobalStats(allParsedItems);
     }
 
@@ -1817,7 +1829,6 @@
         sortKey = sortKey === 'type-asc' ? 'type-desc' : 'type-asc';
       }
       
-      // Синхронізуємо зі списком вибору сортування (якщо є такий варіант)
       const options = Array.from(sortSelect.options).map(opt => opt.value);
       if (options.includes(sortKey)) {
         sortSelect.value = sortKey;
@@ -1848,7 +1859,6 @@
         }
       }
       
-      // На випадок застарілого формату
       const partsDot = dateStr.split('.');
       if (partsDot.length === 3) {
         const day = parseInt(partsDot[0], 10);
@@ -1944,23 +1954,6 @@
     }
 
     /**
-     * Відображення стану "Нічого не знайдено"
-     */
-    function renderNoResults() {
-      const emptyHtml = `
-        <div class="no-results">
-          <i data-lucide="search-x" class="no-results-icon"></i>
-          <h3>Елементів не виявлено</h3>
-          <p>Спробуйте очистити пошуковий запит або змінити критерії фільтрації.</p>
-        </div>
-      `;
-      cardsGrid.innerHTML = emptyHtml;
-      tableBody.innerHTML = `<tr><td colspan="7">${emptyHtml}</td></tr>`;
-      tagCloud.innerHTML = emptyHtml;
-      lucide.createIcons();
-    }
-
-    /**
      * Завантаження зображення з Вікіпедії з кешуванням
      */
     function loadWikiImage(item, callback) {
@@ -2003,7 +1996,10 @@
             loadWikiImage(item, (imgUrl) => {
               if (imgUrl) {
                 imgEl.src = imgUrl;
-                imgEl.classList.add('loaded');
+                imgEl.style.display = 'block';
+                imgEl.onload = () => {
+                  imgEl.classList.add('loaded');
+                };
               } else {
                 imgEl.style.display = 'none';
               }
@@ -2037,13 +2033,18 @@
         `;
       } else if (item.wikiTitle) {
         const imgId = isModal ? `modal-wiki-img-${item.id}` : `wiki-img-${item.id}`;
-        const srcUrl = (item.wikiImageUrl && item.wikiImageUrl !== 'no-image') ? item.wikiImageUrl : "data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3D%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox%3D'0 0 16 9'%2F%3E";
-        const loadedClass = (item.wikiImageUrl && item.wikiImageUrl !== 'no-image') ? "loaded" : "";
+        const hasImage = item.wikiImageUrl && item.wikiImageUrl !== 'no-image';
+        const srcUrl = hasImage ? item.wikiImageUrl : "";
+        
+        // Зображення рендериться прихованим і плавно вмикається після завантаження
+        const imgHtml = srcUrl 
+          ? `<img id="${imgId}" src="${srcUrl}" alt="" class="loaded">` 
+          : `<img id="${imgId}" src="" alt="" style="display: none;">`;
         
         return `
           <div class="card-media" id="${containerId}">
             <a href="${item.url}" target="_blank" class="wikipedia-preview" title="Читати у Вікіпедії">
-              <img id="${imgId}" src="${srcUrl}" alt="${item.mediaTitle}" class="${loadedClass}">
+              ${imgHtml}
               <div class="wiki-overlay">
                 <div class="wiki-logo-btn">
                   <i data-lucide="book-open"></i>
@@ -2182,7 +2183,6 @@
       tagCloud.innerHTML = '';
       
       data.forEach((item, index) => {
-        // Органічний підбір розмірів на основі індексу/довжини
         let sizeClass = 'f-size-md';
         const displayEng = getEnglishDisplay(item);
         const length = displayEng.length;
@@ -2205,7 +2205,7 @@
     }
 
     /**
-     * ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА (Режим детального перегляду)
+     * ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА
      */
     function openModal(itemId) {
       const item = allParsedItems.find(i => i.id === itemId);
@@ -2239,14 +2239,16 @@
       modalOverlay.classList.add('active');
       lucide.createIcons();
 
-      // Динамічне завантаження зображення Вікіпедії для модального вікна
       if (item.wikiTitle) {
         const modalImgEl = document.getElementById(`modal-wiki-img-${item.id}`);
         if (modalImgEl && !modalImgEl.classList.contains('loaded')) {
           loadWikiImage(item, (imgUrl) => {
             if (imgUrl) {
               modalImgEl.src = imgUrl;
-              modalImgEl.classList.add('loaded');
+              modalImgEl.style.display = 'block';
+              modalImgEl.onload = () => {
+                modalImgEl.classList.add('loaded');
+              };
             } else {
               modalImgEl.style.display = 'none';
             }
@@ -2257,7 +2259,6 @@
 
     function closeModal() {
       modalOverlay.classList.remove('active');
-      // Очищуємо iframe, щоб відео вимикалося при закритті модального вікна
       modalTarget.innerHTML = '';
     }
   </script>
